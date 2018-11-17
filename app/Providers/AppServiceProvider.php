@@ -13,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        //fix bug Specified key was too long;
+        \Schema::defaultStringLength(191);
     }
 
     /**
