@@ -11,6 +11,34 @@
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+
+//Route::get('/prize', function () {
+//    return view('user.prize');
+//})->name('user.prize');
+//
+//Route::get('/prize/get', function () {
+//    return view('user.prize');
+//})->name('user.prize.get');
+
+Route::group(['namespace' => 'User', 'middleware' => [ 'auth', 'role:user']], function (){
+    Route::get('/prize', 'PrizeController@play')->name('user.prize');
+    Route::get('/prize/get', 'PrizeController@getPrize')->name('user.prize.get');
+});
+
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'role:admin']], function (){
+    Route::get('/manage', 'ManageController@dashboard')->name('admin.manage');
+//    Route::get('/', 'DashboardController@dashboard')->name('admin.index');
+//    Route::resource('/category', 'CategoryController', ['as' => 'admin']);
+//    Route::resource('/article', 'ArticleController', ['as' => 'admin']);
+//    Route::group(['prefix' => 'user_managment', 'namespace' => 'UserManagment'], function (){
+//        Route::resource('/user', 'UserController', ['as' => 'admin.user_managment']);
+//    });
+});
+
+Route::get('/home', 'HomeController@index')->name('home');
