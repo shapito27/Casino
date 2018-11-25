@@ -17,6 +17,8 @@
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
+    <script src="{{ asset('js/game.js') }}" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
@@ -50,7 +52,7 @@
                         @else
                             @role('user')
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('user.prize') }}">Выиграть приз</a>
+                                <a class="nav-link" href="{{ route('user.game') }}">Выиграть приз</a>
                             </li>
                             @endrole
                             @role('admin')

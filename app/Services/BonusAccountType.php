@@ -9,10 +9,16 @@
 namespace App\Services;
 
 
+use Illuminate\Support\Facades\Log;
+
 class BonusAccountType extends AccountType
 {
-    public function getSystemAccountId():int
+    public static function notEnoughBalance()
     {
-        return (int)env('SYSTEM_BONUS_ACCOUNT');
+    }
+
+    public static function checkAccountBalanceHasEnough(int $accountId, int $value)
+    {
+        return true;
     }
 }

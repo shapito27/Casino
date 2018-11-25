@@ -155,9 +155,41 @@ abstract class Prize
         foreach ($types as $type) {
             $childClasses[] = $namespace . '\\' . ucfirst($type) . 'Prize';
         }
+        //@todo проверять есть ли призы, если нету удалять тип приза
 
         return $childClasses;
     }
 
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function getNameForView():string
+    {
+        $prizeName = '';
+
+        switch ($this->getType()) {
+            case Prize::SUBJECT:
+                $prizeName = Subject::findById($this->value)->name;
+                break;
+            case Prize::MONEY:
+                $prizeName = $this->value . ' ₽';
+                break;
+            case Prize::BONUS:
+                $prizeName = 'бонусы ' . $this->value . ' шт.';
+                break;
+            default:
+                throw new \Exception('Type doesn`t exists yet');
+        }
+
+        return $prizeName;
+    }
 }

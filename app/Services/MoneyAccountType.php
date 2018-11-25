@@ -9,13 +9,28 @@
 namespace App\Services;
 
 
+use App\Exceptions\NotEnoughMoneyOnBalanceException;
+
 class MoneyAccountType extends AccountType
 {
-    /**
-     * @return int
-     */
-    public function getSystemAccountId(): int
+    public static function notEnoughBalance()
     {
-        return (int)env('SYSTEM_MONEY_ACCOUNT');
+        throw new NotEnoughMoneyOnBalanceException();
+    }
+
+    public static function checkAccountBalanceHasEnough(int $accountId, int $value)
+    {
+        //если это админский то можно в минус
+        if($accountId === (new self)->getSystemAccountId()){
+            return true;
+        }
+
+        $currentBalance = self::getBalanceValue($accountId);
+
+        if($currentBalance < $value){
+            throw new NotEnoughMoneyOnBalanceException();
+        }
+
+        return true;
     }
 }

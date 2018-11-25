@@ -8,6 +8,10 @@
 
 namespace App\Services;
 
+use App\Exceptions\SubjectNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+
 /**
  * Class Subject - entity of specific item
  * @package App\Services
@@ -19,7 +23,12 @@ class Subject
      */
     public function getRandom()
     {
-        return \App\Models\Subject::where('available', '=', 1)->inRandomOrder()->firstOrFail();
+        try{
+            return \App\Models\Subject::where('available', '=', 1)->inRandomOrder()->firstOrFail();
+        }catch (ModelNotFoundException $exception){
+            Log::critical('Subject not found!');
+            throw new SubjectNotFoundException();
+        }
     }
 
     /**
@@ -37,10 +46,36 @@ class Subject
         return $newSubject;
     }
 
-    public function markAsNotAvailable(int $subjectId)
+    /**
+     * @param int $subjectId
+     * @return bool
+     */
+    public static function markAsNotAvailable(int $subjectId):bool
     {
-        \App\Models\Subject::findOrFail($subjectId)->update(['available' => 0]);
+        try {
+            \App\Models\Subject::findOrFail($subjectId)->update(['available' => 0]);
 
-        return true;
+            return true;
+        } catch (ModelNotFoundException $exception) {
+            Log::critical($exception);
+
+            return false;
+        }
+    }
+
+    /**
+     * @param int $id
+     * @return \App\Models\Subject|\App\Models\Subject[]|bool|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    public static function findById(int $id)
+    {
+        try {
+            return \App\Models\Subject::findOrFail($id);
+        } catch (ModelNotFoundException $exception) {
+            Log::critical($exception);
+
+            return false;
+        }
+
     }
 }

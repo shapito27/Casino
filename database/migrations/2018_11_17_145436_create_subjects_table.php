@@ -20,23 +20,6 @@ class CreateSubjectsTable extends Migration
             $table->tinyInteger('available');
             $table->timestamps();
         });
-
-        $newSubject1 = new \App\Services\Subject();
-        $newSubject1->add([
-            'name' => 'Ipad Gray',
-            'description' => '128Gb',
-        ]);
-
-        $newSubject2 = new \App\Services\Subject();
-        $newSubject2->add([
-            'name' => 'TV',
-            'description' => 'Samsung GH12SDF',
-        ]);
-        $newSubject3 = new \App\Services\Subject();
-        $newSubject3->add([
-            'name' => 'Trip to Thailand',
-            'description' => '6 days in 4* Hotel',
-        ]);
     }
 
     /**

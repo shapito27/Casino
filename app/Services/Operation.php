@@ -9,6 +9,8 @@
 namespace App\Services;
 
 
+use Illuminate\Support\Facades\DB;
+
 class Operation
 {
     protected $model;
@@ -18,6 +20,9 @@ class Operation
 
     const OPERATION_TSTATUS_WAIT = 'Ожидание';
     const OPERATION_TSTATUS_OK = 'Завершено успешно';
+
+    const DEBET = 1;
+    const CREDIT = 0;
 
     public function __construct()
     {
@@ -63,13 +68,24 @@ class Operation
     {
         /**
          * @todo
-         * 0. Получаем балансы. Проверяем, что баланс отправителя достаточный.
          * 1. Сохранение проводки В Транзакцию!
-         * 2. Создание задания на:  обновление баланса аккаунта 1
-         * 3.                       обновление баланса аккаунта 2
-         * 4                        Обновление статуса проводки на ok
+         *
+         *
+         * 4                        Обновление статуса проводки на ok ????
          * */
 
-        $this->model->save();
+        //Получаем баланс. Проверяем, что баланс отправителя достаточный.
+        Account::checkAccountBalanceHasEnough($this->model->sender_account_id, $this->model->value);
+
+        // save operation and updates balances in one transaction
+        DB::transaction(function () {
+            // save operation
+            $this->model->save();
+            //@todo блокировать баланс (строку) админа пока идет обновление
+            //обновление баланса аккаунта 1
+            Account::updateBalance($this->model->sender_account_id, $this->model->value, self::CREDIT);
+            //обновление баланса аккаунта 2
+            Account::updateBalance($this->model->receiver_account_id, $this->model->value, self::DEBET);
+        });
     }
 }

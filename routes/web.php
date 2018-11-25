@@ -27,8 +27,8 @@ Route::get('/', function () {
 //})->name('user.prize.get');
 
 Route::group(['namespace' => 'User', 'middleware' => [ 'auth', 'role:user']], function (){
-    Route::get('/prize', 'PrizeController@play')->name('user.prize');
-    Route::get('/prize/get', 'PrizeController@getPrize')->name('user.prize.get');
+    Route::get('/prize', 'PrizeController@game')->name('user.game');
+    Route::post('/prize/get', 'PrizeController@getPrize')->name('user.prize.get');
 });
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'role:admin']], function (){

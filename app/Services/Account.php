@@ -8,7 +8,13 @@
 
 namespace App\Services;
 
+use App\Exceptions\AccountBalanceHistoryNotFoundException;
+use App\Exceptions\AccountNotExistsException;
+use App\Exceptions\BalanceNotExistsException;
 use App\Models\Account as ModelAccount;
+use App\Models\AccountBalanceHistory;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class Account
@@ -27,7 +33,7 @@ class Account
     public static function create(AccountType $accountType, int $userId): ModelAccount
     {
         $accauntExisted = self::findByTypeAndUserId($accountType, $userId);
-        if($accauntExisted !== null){
+        if ($accauntExisted !== null) {
             return $accauntExisted;
         }
 
@@ -35,6 +41,12 @@ class Account
         $newAccount->type = $accountType->getClassName();
         $newAccount->user_id = $userId;
         $newAccount->saveOrFail();
+
+        /** @var AccountType $accountType */
+        $accountType = new $newAccount->type;
+        //delegate preparing balance value to specific AccountType entity
+        $initValue = $accountType::prepareInitBalanceValue();
+        self::setBalance((int)$newAccount->id, $initValue);
 
         return $newAccount;
     }
@@ -53,15 +65,75 @@ class Account
         ])->first();
     }
 
-//    protected function getSystemAccount(AccountType $accountType)
-//    {
-////        ConfigHelper::setEnvironmentValue('SYSTEM_MONEY_ACCOUNT', $moneyAccount->id);
-//        env('SYSTEM_MONEY_ACCOUNT');
-//        env('SYSTEM_BONUS_ACCOUNT');
-//        env('SYSTEM_SUBJECT_ACCOUNT');
-//        switch (instant $accountType)
-//
-//        return $systemAccountId;
-//    }
+    /**
+     * @param int $accountId
+     * @param $value
+     */
+    protected static function setBalance(int $accountId, $value):void
+    {
+        $newCurrentBalance = new AccountBalanceHistory();
+        $newCurrentBalance->account_id = $accountId;
+        $newCurrentBalance->value = $value;
+        $newCurrentBalance->save();
+    }
 
+    /**
+     * @param int $accountId
+     * @param int $value
+     * @param int $type debit|credit
+     */
+    public static function updateBalance(int $accountId, int $value, int $type):void
+    {
+        $newValue = null;
+
+        try {
+            $currentAccount = \App\Models\Account::findOrFail($accountId);
+        } catch (ModelNotFoundException $exception) {
+            Log::critical($exception);
+            throw new BalanceNotExistsException();
+        }
+
+        /** @var AccountType $accountType */
+        $accountType = new $currentAccount->type;
+
+        //delegate preparing balance value to specific AccountType entity
+        $newValue = $accountType::prepareBalanceValue($accountId, $value, $type);
+
+        self::setBalance($accountId, $newValue);
+    }
+
+    /**
+     * @param int $accountId
+     * @return AccountBalanceHistory|\Illuminate\Database\Eloquent\Model
+     */
+    public static function getBalance(int $accountId)
+    {
+        try{
+            $currentBalance = AccountBalanceHistory::where('account_id', '=', $accountId)->orderBy('id', 'desc')->firstOrFail();
+
+            return $currentBalance;
+        }catch (ModelNotFoundException $exception){
+            Log::critical('AccountBalanceHistory not found!');
+            throw new AccountBalanceHistoryNotFoundException();
+        }
+    }
+
+    /**
+     * @param int $accountId
+     * @param $value prize value which we want to transfer
+     */
+    public static function checkAccountBalanceHasEnough(int $accountId, $value)
+    {
+        try {
+            $currentAccount = \App\Models\Account::findOrFail($accountId);
+        } catch (ModelNotFoundException $exception) {
+            Log::critical($exception);
+            throw new AccountNotExistsException();
+        }
+
+        /** @var AccountType $accountType */
+        $accountType = new $currentAccount->type;
+
+        return $accountType::checkAccountBalanceHasEnough($accountId, $value);
+    }
 }

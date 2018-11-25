@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account query()
  * @mixin \Eloquent
  * @property int $id
- * @property int $type_id
+ * @property string $type
  * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\app\Account whereUserId($value)
  * @property-read \app\Models\User $user
- * @property string $type
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereType($value)
  */
 class Account extends Model

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\Exceptions;
+namespace App\Exceptions;
 
 
 class IsNotChildOfPrizeException extends \Exception
