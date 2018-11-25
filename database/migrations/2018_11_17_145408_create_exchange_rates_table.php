@@ -13,21 +13,24 @@ class CreateExchangeRatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('exchange_rates', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('sender_account_type_id');
-            $table->integer('receiver_account_type_id');
-            $table->decimal('rate',7,2);
-            $table->timestamps();
-            $table->index('sender_account_type_id');
-            $table->index('receiver_account_type_id');
-        });
+//        Schema::create('exchange_rates', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->string('sender_account_type');
+//            $table->string('receiver_account_type');
+//            $table->decimal('rate',7,2);
+//            $table->timestamps();
+//            $table->index('sender_account_type_id');
+//            $table->index('receiver_account_type_id');
+//        });
 
-        $exRate = new \App\ExchangeRate();
-        $exRate->sender_account_type_id = \App\AccountType::select('id')->where('code', '=', 'money')->first()->id;
-        $exRate->receiver_account_type_id = \App\AccountType::select('id')->where('code', '=', 'bonus')->first()->id;
-        $exRate->rate = 10;
-        $exRate->save();
+        /**
+         * @todo sender_account_type and store '\App\Services\MoneyAccountType'
+         */
+//        $exRate = new \App\Models\ExchangeRate();
+//        $exRate->sender_account_type = ;
+//        $exRate->receiver_account_type = \App\Models\AccountType::select('id')->where('code', '=', 'bonus')->first()->id;
+//        $exRate->rate = 10;
+//        $exRate->save();
     }
 
     /**

@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use \App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Services\Account;
+use App\Services\BonusAccountType;
+use App\Services\MoneyAccountType;
+use App\Services\SubjectAccountType;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -59,14 +63,26 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => Hash::make($data['password'])
         ]);
+        $user->attachRole(\App\Models\Role::getUser());
+
+        //create money user account
+        $moneyAccount = Account::create(new MoneyAccountType(), $user->id);
+
+        //create Bonus user account
+        $bonusAccount = Account::create(new BonusAccountType(), $user->id);
+
+        //create Subject user account
+        $subjectAccount = Account::create(new SubjectAccountType(), $user->id);
+
+        return $user;
     }
 }

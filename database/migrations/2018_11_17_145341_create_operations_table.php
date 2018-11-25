@@ -15,14 +15,15 @@ class CreateOperationsTable extends Migration
     {
         Schema::create('operations', function (Blueprint $table) {
             $table->increments('id');
-            $table->decimal('value', 7,2);
-            $table->integer('status_id');
-            $table->integer('type_id');
+            $table->integer('value');
+//            $table->decimal('value', 7,2);// for future production
+            $table->string('status');
+            $table->string('type');
             $table->integer('sender_account_id');
             $table->integer('receiver_account_id');
             $table->timestamps();
-            $table->index('status_id');
-            $table->index('type_id');
+            $table->index('status');
+            $table->index('type');
             $table->index('sender_account_id');
             $table->index('receiver_account_id');
         });

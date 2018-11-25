@@ -7,6 +7,11 @@
             <div class="card">
                 <div class="card-header">Получить приз</div>
 
+                <div class="row justify-content-center">
+                    <div class="col-md-4">Денежный приз</div>
+                    <div class="col-md-4">Бонусы</div>
+                    <div class="col-md-4">Подарок</div>
+                </div>
                 <div class="card-body">
                     <form action="{{route('user.prize.get')}}" method="post" class="form-horizontal" >
                         <input type="hidden" name="_method" value="get">

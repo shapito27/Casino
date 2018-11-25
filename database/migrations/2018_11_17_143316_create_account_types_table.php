@@ -13,34 +13,34 @@ class CreateAccountTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('account_types', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('code', 100)->unique();
-            $table->string('name', 100);
-            $table->timestamps();
-        });
-
-        $accountTypes = [
-            [
-                'name' => 'Денежный счет',
-                'code' => 'money'
-            ],
-            [
-                'name' => 'Бонусный счет',
-                'code' => 'bonus'
-            ],
-            [
-                'name' => 'Предметы',
-                'code' => 'subject'
-            ],
-        ];
-
-        foreach ($accountTypes as $type){
-            $newType = new \App\AccountType();
-            $newType->name = $type['name'];
-            $newType->code = $type['code'];
-            $newType->save();
-        }
+//        Schema::create('account_types', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->string('code', 100)->unique();
+//            $table->string('name', 100);
+//            $table->timestamps();
+//        });
+//
+//        $accountTypes = [
+//            [
+//                'name' => 'Денежный счет',
+//                'code' => 'money'
+//            ],
+//            [
+//                'name' => 'Бонусный счет',
+//                'code' => 'bonus'
+//            ],
+//            [
+//                'name' => 'Предметы',
+//                'code' => 'subject'
+//            ],
+//        ];
+//
+//        foreach ($accountTypes as $type){
+//            $newType = new \App\Models\AccountType();
+//            $newType->name = $type['name'];
+//            $newType->code = $type['code'];
+//            $newType->save();
+//        }
     }
 
     /**
@@ -50,6 +50,6 @@ class CreateAccountTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('account_types');
+//        Schema::dropIfExists('account_types');
     }
 }

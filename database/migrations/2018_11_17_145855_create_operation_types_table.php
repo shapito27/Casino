@@ -13,37 +13,37 @@ class CreateOperationTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('operation_types', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('code', 100)->unique();
-            $table->string('name', 100);
-            $table->timestamps();
-        });
-
-        $accountTypes = [
-            [
-                'name' => 'Выигрыш',
-                'code' => 'win'
-            ],
-            [
-                'name' => 'Конвертация',
-                'code' => 'convertation'
-            ],
-            [
-                'name' => 'Вывод средств',
-                'code' => 'withdraw'
-            ],
-            [
-                'name' => 'Пополнение',
-                'code' => 'charge'
-            ],
-        ];
-        foreach ($accountTypes as $type){
-            $newType = new \App\AccountType();
-            $newType->name = $type['name'];
-            $newType->code = $type['code'];
-            $newType->save();
-        }
+//        Schema::create('operation_types', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->string('code', 100)->unique();
+//            $table->string('name', 100);
+//            $table->timestamps();
+//        });
+//
+//        $accountTypes = [
+//            [
+//                'name' => 'Выигрыш',
+//                'code' => 'win'
+//            ],
+//            [
+//                'name' => 'Конвертация',
+//                'code' => 'convertation'
+//            ],
+//            [
+//                'name' => 'Вывод средств',
+//                'code' => 'withdraw'
+//            ],
+//            [
+//                'name' => 'Пополнение',
+//                'code' => 'charge'
+//            ],
+//        ];
+//        foreach ($accountTypes as $type){
+//            $newType = new \App\Models\OperationType();
+//            $newType->name = $type['name'];
+//            $newType->code = $type['code'];
+//            $newType->save();
+//        }
     }
 
     /**

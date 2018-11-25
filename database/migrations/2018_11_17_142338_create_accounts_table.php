@@ -15,10 +15,10 @@ class CreateAccountsTable extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('type_id');
+            $table->string('type');
             $table->integer('user_id');
             $table->timestamps();
-            $table->index('type_id');
+            $table->index('type');
             $table->index('user_id');
         });
     }
