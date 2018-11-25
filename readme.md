@@ -1,65 +1,54 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+## Установка
+1. git clone git@bitbucket.org:Shapito27/casino.git
+2. Настройка доступа к БД в /.env
+<br>
+DB_CONNECTION=mysql<br>
+DB_HOST=127.0.0.1<br>
+DB_PORT=3306<br>
+DB_DATABASE=homestead<br>
+DB_USERNAME=homestead<br>
+DB_PASSWORD=secret<br>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+## Вход
+Для админа:<br>
+**логин**:  example@test.ru<br>
+**пароль**: 3sdf980sd8fsdf<br>
+<br>
+Игрокам, надо регистрироваться на сайте.
+## Описание
+Попытался все счета (денежный, бонусный и счета с "физ. предметами") реализовать на основе бухгалтерской теории. Т.е. у пользователя есть 3 счета имеющие разный тип. Есть таблица Operations с проводками, которая объединяет в себе двойную запись, проводки и собственно журнал проводок. 
+<br>Для примера, каждый выйгрыш это проводка: из систимного аккаунта выйгрыш переводится на аккаунт игрока.
+Баланс хранится в отдельной таблице AccountBalanceHistory. После каждой проводки идет обновление балансов: системного и игрока. Обновление баланса для аккаунта представляет собой новую запись в таблице с прявязкой к аккаунту. Последняя запись по аккаунту есть актуальный баланс.<br>
+Для проверки, что всё в системе с деньгами на аккаунтах идет корректно, можно реализовать проверку актуально баланса. Сплюсовать все приходы и вычесть все расходы на основе данных из таблицы Operation и сравнить с балансом.<br>
+При создании приложения создается системный аккаунт администратора. Там можно указывать ограничения для выйгрыша. Интервал размера выйгрыша. Видеть сколько денег, бонусов и предметов выйграли игроки.
+Все пользователи, которые будут регистрироваться на сайте получат роль user и у них будет возможность играть в игру.
 
-## About Laravel
+Чтобы разделить логику для разных типов призов использовал паттер стратегии. 
+Делегировал логику работы с каждым типом аккаунта соответствующему классу. Т.е. если приз деньги, то отвечал за перевод соответствующий класс MoneyAccountType, если это приз физический предмет, то SubjectAccountType и т.п.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+## Проект
+/app/Console/Commands  - консольные комманды<br>
+/app/Contracts  - интерфейсы<br>
+/app/Exceptions  - исключения<br>
+/app/Http/Controllers/Admin  - контроллеры административной части<br>
+/app/Http/Controllers/User  - контроллеры пользовательской части<br>
+/app/Jobs  - класс  для очереди<br>
+/app/Models  - модели<br>
+/app/Services  - классы слоя логики приложения<br>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+/routes/web.php  - роутинг приложения<br>
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
-
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
+## Прототип
+Вход http://prntscr.com/lmvcg7
+<br>
+Регистрация http://prntscr.com/lmvcut
+<br>
+Первая страницы игры http://prntscr.com/lmvdef
+<br>
+Выйгрыш https://prnt.sc/lmve5d
+<br>
+Отказ от приза https://prnt.sc/lmvef2
+<br>
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

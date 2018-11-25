@@ -13,18 +13,10 @@ use App\Contracts\Convertable;
 
 abstract class Prize
 {
-
-////    private $code;
-//
-//    /** @var string Name of prize */
-//    protected $displayName;
     /** @var AccountType strategy for transfer prize */
     protected $accountType;
-//    /** @var User */
-//    public $user;
     /** @var int */
     public $value;
-
     /** @var string type of Prize */
     protected $type;
 
@@ -32,13 +24,14 @@ abstract class Prize
     const BONUS = 'bonus';
     const SUBJECT = 'subject';
 
+    /** @var string in this var we store last gotten prize entity */
+    public const SESSION_VAR_LAST_GOTTENN_PRIZE = 'last_gottenn_prize';
+
     /**
      * @var Prize[]
      */
     protected static $childClasses;
-//
-//
-//
+
     /**
      * Prize constructor.
      */
@@ -68,9 +61,9 @@ abstract class Prize
      * refuse prize by delegating it to Account Type
      * @param Services\User $user
      */
-    public function refuse(\App\Services\User $user)
+    public function refuse(int $userId)
     {
-        $this->accountType->refuse($user);
+        $this->accountType->refuse($this, $userId);
     }
 
     /**

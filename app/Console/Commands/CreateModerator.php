@@ -43,10 +43,12 @@ class CreateModerator extends Command
      */
     public function handle()
     {
+        $password = '3sdf980sd8fsdf';
+
         //Создаем проверяющего
         $user = new User();
         $user->name = 'Moderator';
-        $user->password = Hash::make(env('MODERATOR_PASSWORD'));
+        $user->password = Hash::make($password);
         $user->email = 'example@test.ru';
         $user->save();
         $user->attachRole(\App\Models\Role::getAdmin());

@@ -37,15 +37,35 @@ abstract class AccountType
      * @param Prize $prize
      * @param int $userId
      */
-    public function transfer(Prize $prize, int $userId)
+    final public function transfer(Prize $prize, int $userId)
     {
         $userAccount = Account::findByTypeAndUserId($this, $userId);
         $operation = new Operation();
-        $operation->setSenderAccount($this->getSystemAccountId())
+
+        $result = $operation->setSenderAccount($this->getSystemAccountId())
             ->setReceiverAccount($userAccount->id)
             ->setValue($prize->value)
             ->setType(Operation::OPERATION_TYPE_WIN)
             ->setStatus(Operation::OPERATION_TSTATUS_WAIT)
+            ->transfer();
+
+        // save prize in session for simple refuse
+        if($result === true){
+            //save last operation to session
+            session([Prize::SESSION_VAR_LAST_GOTTENN_PRIZE => $prize]);
+        }
+    }
+
+    final public function refuse(Prize $prize, int $userId)
+    {
+        $userAccount = Account::findByTypeAndUserId($this, $userId);
+        $operation = new Operation();
+
+        $result = $operation->setSenderAccount($userAccount->id)
+            ->setReceiverAccount($this->getSystemAccountId())
+            ->setValue($prize->value)
+            ->setType(Operation::OPERATION_TYPE_REFUSE)
+            ->setStatus(Operation::OPERATION_TSTATUS_OK)
             ->transfer();
     }
 

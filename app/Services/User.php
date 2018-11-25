@@ -40,7 +40,7 @@ class User
      */
     public function refusePrize(Prize $prize)
     {
-        $prize->refuse($this);
+        $prize->refuse($this->getCurrentUser());
     }
 
     /**

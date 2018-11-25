@@ -29,6 +29,10 @@ class Operation
         $this->model = new \App\Models\Operation();
     }
 
+    /**
+     * @param int $senderAccountId
+     * @return $this
+     */
     public function setSenderAccount(int $senderAccountId)
     {
         $this->model->sender_account_id = $senderAccountId;
@@ -36,6 +40,10 @@ class Operation
         return $this;
     }
 
+    /**
+     * @param int $receiverAccountId
+     * @return $this
+     */
     public function setReceiverAccount(int $receiverAccountId)
     {
         $this->model->receiver_account_id = $receiverAccountId;
@@ -43,6 +51,10 @@ class Operation
         return $this;
     }
 
+    /**
+     * @param int $value
+     * @return $this
+     */
     public function setValue(int $value)
     {
         $this->model->value = $value;
@@ -50,6 +62,10 @@ class Operation
         return $this;
     }
 
+    /**
+     * @param string $type
+     * @return $this
+     */
     public function setType(string $type)
     {
         $this->model->type = $type;
@@ -57,6 +73,10 @@ class Operation
         return $this;
     }
 
+    /**
+     * @param string $status
+     * @return $this
+     */
     public function setStatus(string $status)
     {
         $this->model->status = $status;
@@ -64,7 +84,12 @@ class Operation
         return $this;
     }
 
-    public function transfer()
+    /**
+     * @return bool
+     * @throws \App\Exceptions\AccountNotExistsException
+     * @throws \Throwable
+     */
+    public function transfer():bool
     {
         /**
          * @todo
@@ -86,6 +111,12 @@ class Operation
             Account::updateBalance($this->model->sender_account_id, $this->model->value, self::CREDIT);
             //обновление баланса аккаунта 2
             Account::updateBalance($this->model->receiver_account_id, $this->model->value, self::DEBET);
-        });
+        }, 3);
+
+        if($this->model->id !== null){
+            return true;
+        }
+
+        return false;
     }
 }
