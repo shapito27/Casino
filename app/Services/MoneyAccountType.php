@@ -33,4 +33,45 @@ class MoneyAccountType extends AccountType
 
         return true;
     }
+
+    /**
+     * @param Prize $prize
+     * @param int $userId
+     * @return BonusPrize
+     * @throws \App\Exceptions\AccountNotExistsException
+     * @throws \Throwable
+     */
+    public function convert(Prize $prize, int $userId):BonusPrize
+    {
+        $exchangeRate = (new ExchangeRate())->getRate();
+
+        /** @var BonusPrize $newPrize */
+        $newPrize = new BonusPrize();
+        //set converted value
+        $newPrize->setValue($this->recountByRate($prize->value, $exchangeRate));
+
+        $userMoneyAccount = Account::findByTypeAndUserId($this, $userId);
+        $userBonusAccount = Account::findByTypeAndUserId(new BonusAccountType(), $userId);
+        $operation = new Operation();
+
+        $operation->setSenderAccount($userMoneyAccount->id)
+            ->setReceiverAccount($userBonusAccount->id)
+            ->setType(Operation::OPERATION_TYPE_REFUSE)
+            ->setStatus(Operation::OPERATION_TSTATUS_OK)
+            ->convertationTransfer($prize->value, $newPrize->value);
+
+        return $newPrize;
+    }
+
+    /**
+     * Convert money to bonus. money * excnageRate = bonuses
+     * @param int $value
+     * @param int $exchangeRate
+     * @return int
+     */
+    public function recountByRate(int $value, int $exchangeRate):float
+    {
+        return $value * $exchangeRate;
+    }
+
 }

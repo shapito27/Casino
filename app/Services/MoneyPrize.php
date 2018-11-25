@@ -11,6 +11,11 @@ namespace App\Services;
 
 use App\Contracts\Convertable;
 
+/**
+ * Class MoneyPrize
+ * @property MoneyAccountType $accountType
+ * @package App\Services
+ */
 class MoneyPrize extends Prize implements Convertable
 {
 
@@ -26,11 +31,14 @@ class MoneyPrize extends Prize implements Convertable
     }
 
     /**
-     *
+     * @param int $userId
+     * @return BonusPrize
+     * @throws \App\Exceptions\AccountNotExistsException
+     * @throws \Throwable
      */
-    public function convert()
+    public function convert(int $userId):BonusPrize
     {
-        $this->accountType->convert();
+        return $this->accountType->convert($this, $userId);
     }
 
 //    /**

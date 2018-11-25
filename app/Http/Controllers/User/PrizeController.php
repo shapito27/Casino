@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Services\MoneyPrize;
 use App\Services\Prize;
 use App\Services\User;
 use App\Http\Controllers\Controller;
@@ -61,20 +62,27 @@ class PrizeController extends Controller
 
     public function convertMoneyPrize(Request $request)
     {
-        /** @var Prize $prize last prize from session */
+        /** @var MoneyPrize $prize last prize from session */
         $prize = $request->session()->get(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
 
         $user = new User();
-        //transfer prize to user account
-        $user->convertPrize($prize);
-//        $request->session()->remove(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
-//
-//        return response()->json(
-//            [
-//                'view' => view('user.prize-refuse')->render()
-//            ],
-//            200
-//        );
+
+        //convert prize from money user account to bonus user account
+        $convertedPrize = $user->convertPrize($prize);
+
+        //we don't need it any more
+        $request->session()->remove(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
+
+        $prizeName = $convertedPrize->getNameForView();
+
+        return response()->json(
+            [
+                'view' => view('user.prize-convert', [
+                    'prizeName' => $prizeName
+                ])->render()
+            ],
+            200
+        );
     }
 
     public function game()

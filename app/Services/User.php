@@ -9,7 +9,7 @@
 namespace App\Services;
 
 
-use App\Exceptions\IsPrizeConvertableException;
+use App\Exceptions\IsPrizeNotConvertableException;
 
 class User
 {
@@ -55,14 +55,20 @@ class User
 
     /**
      * Convert prize to another type of prize. If it convertable
+     * @param MoneyPrize $prize
+     * @return BonusPrize
+     * @throws IsPrizeNotConvertableException
+     * @throws \App\Exceptions\AccountNotExistsException
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function convertPrize(Prize $prize)
+    public function convertPrize(MoneyPrize $prize):BonusPrize
     {
         if($prize->isConvertable() === false){
-            throw new IsPrizeConvertableException();
+            throw new IsPrizeNotConvertableException('You are tring to convert not convertable prize!');
         }
 
-        $prize->convert($this);
+        return $prize->convert($this->getCurrentUser());
     }
 
     /**

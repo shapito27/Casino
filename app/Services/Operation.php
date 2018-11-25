@@ -92,13 +92,8 @@ class Operation
     public function transfer():bool
     {
         /**
-         * @todo
-         * 1. Сохранение проводки В Транзакцию!
-         *
-         *
-         * 4                        Обновление статуса проводки на ok ????
+         * @todo Обновление статуса проводки на ok  ????
          * */
-
         //Получаем баланс. Проверяем, что баланс отправителя достаточный.
         Account::checkAccountBalanceHasEnough($this->model->sender_account_id, $this->model->value);
 
@@ -111,6 +106,34 @@ class Operation
             Account::updateBalance($this->model->sender_account_id, $this->model->value, self::CREDIT);
             //обновление баланса аккаунта 2
             Account::updateBalance($this->model->receiver_account_id, $this->model->value, self::DEBET);
+        }, 3);
+
+        if($this->model->id !== null){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * For convertation one more transfer because debit for first account and credit for second accaunt not equal
+     * @param int $value
+     * @param int $convertedValue
+     * @return bool
+     * @throws \Throwable
+     */
+    public function convertationTransfer(int $value, int $convertedValue):bool
+    {
+        $this->setValue($value);
+        // save operation and updates balances in one transaction
+        DB::transaction(function () use ($value, $convertedValue) {
+            // save operation
+            $this->model->save();
+            //@todo блокировать баланс (строку) админа пока идет обновление
+            //обновление баланса аккаунта 1
+            Account::updateBalance($this->model->sender_account_id, $value, self::CREDIT);
+            //обновление баланса аккаунта 2
+            Account::updateBalance($this->model->receiver_account_id, $convertedValue, self::DEBET);
         }, 3);
 
         if($this->model->id !== null){
