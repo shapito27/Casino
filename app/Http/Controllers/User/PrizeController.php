@@ -60,12 +60,10 @@ class PrizeController extends Controller
     }
 
 
-    public function convertMoneyPrize(Request $request)
+    public function convertMoneyPrize(Request $request, User $user)
     {
         /** @var MoneyPrize $prize last prize from session */
         $prize = $request->session()->get(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
-
-        $user = new User();
 
         //convert prize from money user account to bonus user account
         $convertedPrize = $user->convertPrize($prize);

@@ -165,6 +165,7 @@ return [
 
         // for roles
         Zizaco\Entrust\EntrustServiceProvider::class,
+        App\Providers\UserServiceProvider::class,
 
     ],
 
@@ -215,6 +216,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+        /** custom */
+        'User'   => App\Facades\User::class,
     ],
 
 ];

@@ -47,7 +47,8 @@
         "post-create-project-cmd": [
             "@php artisan key:generate",
             "@php artisan casino:createRoles",
-            "@php artisan casino:createModerator"
+            "@php artisan casino:createModerator",
+            "@php artisan casino:createSubjects"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
