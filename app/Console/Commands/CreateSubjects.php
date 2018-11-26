@@ -57,11 +57,81 @@ class CreateSubjects extends Command
         \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
             Operation::DEBET);
 
+        $newSubject2 = $newSubject
+            ->add([
+                'name' => '3D Телевизор White',
+                'description' => 'Samsung GH12SDF',
+            ]);
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
+            Operation::DEBET);
+
+        $newSubject2 = $newSubject
+            ->add([
+                'name' => '3D Телевизор Red',
+                'description' => 'Samsung GH12SDF',
+            ]);
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
+            Operation::DEBET);
+
+        $newSubject2 = $newSubject
+            ->add([
+                'name' => '3D Телевизор Green',
+                'description' => 'Samsung GH12SDF',
+            ]);
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
+            Operation::DEBET);
+
+        $newSubject2 = $newSubject
+            ->add([
+                'name' => '3D Телевизор Yellow',
+                'description' => 'Samsung GH12SDF',
+            ]);
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
+            Operation::DEBET);
+
         $newSubject3 = $newSubject
             ->add([
                 'name' => 'Путешествие в Тайланд',
                 'description' => '6 days in 4* Hotel',
             ]);
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject3->id, Operation::DEBET);
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject3->id,
+            Operation::DEBET);
+
+        $newSubject1 = $newSubject
+            ->add([
+                'name' => 'Ipad Red',
+                'description' => '128Gb',
+            ]);
+
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
+            Operation::DEBET);
+
+        $newSubject1 = $newSubject
+            ->add([
+                'name' => 'Ipad Black',
+                'description' => '128Gb',
+            ]);
+
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
+            Operation::DEBET);
+
+        $newSubject1 = $newSubject
+            ->add([
+                'name' => 'Ipad white',
+                'description' => '128Gb',
+            ]);
+
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
+            Operation::DEBET);
+
+
+        $newSubject1 = $newSubject
+            ->add([
+                'name' => 'Ipad Orange',
+                'description' => '128Gb',
+            ]);
+
+        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
+            Operation::DEBET);
     }
 }

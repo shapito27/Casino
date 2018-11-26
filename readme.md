@@ -14,6 +14,7 @@
     DB_USERNAME=homestead
 
     DB_PASSWORD=secret
+    
 4. `bash configs2.sh`
 
 ## Запуск веб-сервера 
