@@ -1,6 +1,6 @@
 ## Установка
-1. `git clone git@bitbucket.org:Shapito27/casino.git`
-2. `bash configs`
+1. `git clone https://Shapito27@bitbucket.org/Shapito27/casino.git`
+2. `bash configs.sh`
 3. Настройка доступа к БД в /.env
 
 DB_CONNECTION=mysql
@@ -15,7 +15,8 @@ DB_USERNAME=homestead
 
 DB_PASSWORD=secret
 
-4. Запуск веб-сервера `php artisan serve`
+## Запуск веб-сервера 
+`php artisan serve`
 
 ## Вход
 Для админа:
