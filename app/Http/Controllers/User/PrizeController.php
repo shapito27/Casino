@@ -10,6 +10,13 @@ use Illuminate\Http\Request;
 
 class PrizeController extends Controller
 {
+    private $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
     /**
      * Action after pressing button Play
      * @throws \Exception
@@ -18,7 +25,7 @@ class PrizeController extends Controller
     {
         /** @var Prize $prize */
         $prize = \App\Services\Prize::generateRandomPrize();
-        $user = new User();
+        $user = $this->user;
         //transfer prize to user account
         $user->getPrize($prize);
 
@@ -44,7 +51,7 @@ class PrizeController extends Controller
         $prize = $request->session()->get(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
 
         /** @var User $user */
-        $user = new User();
+        $user = $this->user;
         //transfer prize to user account
         $user->refusePrize($prize);
 
@@ -53,15 +60,16 @@ class PrizeController extends Controller
 
         return response()->json(
             [
-                'view' => view('user.prize-refuse')->render()
+                'view' => view('user.prize_refuse')->render()
             ],
             200
         );
     }
 
 
-    public function convertMoneyPrize(Request $request, User $user)
+    public function convertMoneyPrize(Request $request)
     {
+        $user = $this->user;
         /** @var MoneyPrize $prize last prize from session */
         $prize = $request->session()->get(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
 
@@ -75,7 +83,7 @@ class PrizeController extends Controller
 
         return response()->json(
             [
-                'view' => view('user.prize-convert', [
+                'view' => view('user.prize_convert', [
                     'prizeName' => $prizeName
                 ])->render()
             ],

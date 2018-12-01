@@ -20,10 +20,11 @@ class ExchangeRate
      */
     public function getRate():int
     {
-        return (int)env(self::EXCHANGE_RATE_COEFFICIENT_NAME);
+        return config('casino.exchange_rate_coefficient');
     }
 
     /**
+     * @todo работает?
      * @param $value
      */
     public function setRate(int $value)

@@ -51,7 +51,7 @@ class MoneyAccountType extends AccountType
         $newPrize->setValue($this->recountByRate($prize->value, $exchangeRate));
 
         $userMoneyAccount = Account::findByTypeAndUserId($this, $userId);
-        $userBonusAccount = Account::findByTypeAndUserId(new BonusAccountType(), $userId);
+        $userBonusAccount = Account::findByTypeAndUserId($newPrize->getAccountType(), $userId);
         $operation = new Operation();
 
         $operation->setSenderAccount($userMoneyAccount->id)

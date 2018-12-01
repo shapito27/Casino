@@ -109,7 +109,7 @@ class Account
     public static function getBalance(int $accountId)
     {
         try{
-            $currentBalance = AccountBalanceHistory::where('account_id', '=', $accountId)->orderBy('id', 'desc')->firstOrFail();
+            $currentBalance = AccountBalanceHistory::where('account_id', $accountId)->latest('id')->firstOrFail();
 
             return $currentBalance;
         }catch (ModelNotFoundException $exception){

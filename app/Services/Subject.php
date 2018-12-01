@@ -24,7 +24,7 @@ class Subject
     public function getRandom()
     {
         try{
-            return \App\Models\Subject::where('available', '=', 1)->inRandomOrder()->firstOrFail();
+            return \App\Models\Subject::where('available', 1)->inRandomOrder()->firstOrFail();
         }catch (ModelNotFoundException $exception){
             Log::critical('Subject not found!');
             throw new SubjectNotFoundException();

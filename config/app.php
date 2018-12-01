@@ -167,6 +167,14 @@ return [
         Zizaco\Entrust\EntrustServiceProvider::class,
         App\Providers\UserServiceProvider::class,
 
+        //for prize`s types
+        \App\Providers\MoneyPrizeProvider::class,
+        \App\Providers\BonusPrizeProvider::class,
+        \App\Providers\SubjectPrizeProvider::class,
+        \App\Providers\ExchangeRateServiceProvider::class,
+
+
+
     ],
 
     /*
@@ -218,6 +226,10 @@ return [
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         /** custom */
         'User'   => App\Facades\User::class,
+        'BonusPrize'   => App\Facades\BonusPrize::class,
+        'MoneyPrize'   => App\Facades\MoneyPrize::class,
+        'SubjectPrize'   => App\Facades\SubjectPrize::class,
+        'User'   => App\Facades\ExchangeRate::class,
     ],
 
 ];

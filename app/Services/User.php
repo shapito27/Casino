@@ -10,16 +10,38 @@ namespace App\Services;
 
 
 use App\Exceptions\IsPrizeNotConvertableException;
+use Auth;
 
 class User
 {
+    /** @var Auth */
+    private $auth;
+
+    /**
+     * @param Auth $auth
+     */
+    public function setAuth(Auth $auth)
+    {
+        $this->auth = $auth;
+    }
+
+    /**
+     * @return Auth
+     */
+    public function getAuth(): Auth
+    {
+        return $this->auth??app('Auth');
+    }
+
     /**
      * @return int
      * @throws AuthorizationException
      */
     protected function getCurrentUser()
     {
-        $user = \Auth::user();
+        $auth = $this->getAuth();
+        $user = $auth::user();
+
         if($user === null){
             throw new AuthorizationException('Something wrong! No authorization user!');
         }

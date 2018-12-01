@@ -73,7 +73,7 @@ class PrizeInterval
     public function findIntervalByPrizeType()
     {
         try{
-            $interval = \App\Models\PrizeInterval::where('prize_type', '=', $this->prizeType)->firstOrFail();
+            $interval = \App\Models\PrizeInterval::where('prize_type', $this->prizeType)->firstOrFail();
             $this->id = $interval->id;
             $this->name = $interval->name;
             $this->prize_type = $interval->prize_type;
