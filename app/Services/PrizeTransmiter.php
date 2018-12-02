@@ -11,11 +11,22 @@ namespace App\Services;
 
 class PrizeTransmiter
 {
+    /** @var Transfer */
     private $transfer;
 
-    public function __construct(Transfer $transfer)
+    /**
+     * @param Prize $prize
+     */
+    public function run(Prize $prize)
+    {
+        $this->transfer->run();
+    }
+
+    /**
+     * @param Transfer $transfer
+     */
+    public function setTransfer(Transfer $transfer): void
     {
         $this->transfer = $transfer;
     }
-
 }

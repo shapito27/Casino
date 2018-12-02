@@ -24,7 +24,7 @@ class SubjectPrizeProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('money.prize', function ($app) {
+        $this->app->bind('subject.prize', function ($app) {
             return new SubjectPrize();
         });
     }

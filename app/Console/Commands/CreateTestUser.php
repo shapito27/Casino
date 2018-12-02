@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\ConfigHelper;
 use App\Models\User;
 use App\Services\BonusAccount;
 use App\Services\MoneyAccount;
@@ -10,21 +9,21 @@ use App\Services\SubjectAccount;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
-class CreateModerator extends Command
+class CreateTestUser extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'casino:createModerator';
+    protected $signature = 'casino:createTestUser';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create system user';
+    protected $description = 'Create test user';
 
     /**
      * Create a new command instance.
@@ -43,15 +42,15 @@ class CreateModerator extends Command
      */
     public function handle()
     {
-        $password = '3sdf980sd8fsdf';
+        $password = 'ksd9f8asdksdf9';
 
         //Создаем проверяющего
         $user = new User();
-        $user->name = 'Moderator';
+        $user->name = 'TestUser';
         $user->password = Hash::make($password);
-        $user->email = 'example@test.ru';
+        $user->email = 'example2@test.ru';
         $user->save();
-        $user->attachRole(\App\Models\Role::getAdmin());
+        $user->attachRole(\App\Models\Role::getUser());
 
         /**
          * Создаем  счета админа
@@ -61,22 +60,16 @@ class CreateModerator extends Command
         /** @var MoneyAccount $moneyAccount */
         $moneyAccount = app('money.account');
         $moneyAccount->create($user->id);
-        //добавляем в конфиг денежный счет админа
-        ConfigHelper::setEnvironmentValue('SYSTEM_MONEY_ACCOUNT', $moneyAccount->id);
 
         //Создаем бонусный счет админа
         /** @var BonusAccount $bonusAccount */
         $bonusAccount = app('bonus.account');
         $bonusAccount->create($user->id);
-        //добавляем в конфиг бонусный счет админа
-        ConfigHelper::setEnvironmentValue('SYSTEM_BONUS_ACCOUNT', $bonusAccount->id);
 
         //Создаем предметный счет админа
         /** @var SubjectAccount $subjectAccount */
         $subjectAccount = app('subject.account');
         $subjectAccount->create($user->id);
-        //добавляем в конфиг предметный счет админа
-        ConfigHelper::setEnvironmentValue('SYSTEM_SUBJECT_ACCOUNT', $subjectAccount->id);
 
         echo "Success!\n";
     }

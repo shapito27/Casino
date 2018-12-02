@@ -172,9 +172,14 @@ return [
         \App\Providers\BonusPrizeProvider::class,
         \App\Providers\SubjectPrizeProvider::class,
         \App\Providers\ExchangeRateServiceProvider::class,
-
-
-
+        \App\Providers\ConvertationTransferServiceProvider::class,
+        \App\Providers\PrizeConverterServiceProvider::class,
+        \App\Providers\PrizeTransmiterServiceProvider::class,
+        \App\Providers\TransferServiceProvider::class,
+        \App\Providers\MoneyAccountServiceProvider::class,
+        \App\Providers\BonusAccountServiceProvider::class,
+        \App\Providers\SubjectAccountServiceProvider::class,
+        \App\Providers\AccountHelperServiceProvider::class,
     ],
 
     /*
@@ -229,7 +234,15 @@ return [
         'BonusPrize'   => App\Facades\BonusPrize::class,
         'MoneyPrize'   => App\Facades\MoneyPrize::class,
         'SubjectPrize'   => App\Facades\SubjectPrize::class,
-        'User'   => App\Facades\ExchangeRate::class,
+        'ExchangeRate'   => App\Facades\ExchangeRate::class,
+        'ConvertationTransfer'   => App\Facades\ConvertationTransfer::class,
+        'PrizeConverter'   => App\Facades\PrizeConverter::class,
+        'PrizeTransmiter'   => App\Facades\PrizeTransmiter::class,
+        'Transfer'   => App\Facades\Transfer::class,
+        'MoneyAccount'   => App\Facades\MoneyAccount::class,
+        'BonusAccount'   => App\Facades\BonusAccount::class,
+        'SubjectAccount'   => App\Facades\SubjectAccount::class,
+        'AccountHelper'   => App\Facades\AccountHelper::class,
     ],
 
 ];

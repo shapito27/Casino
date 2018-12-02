@@ -11,5 +11,5 @@ namespace app\Contracts;
 
 interface Convertable
 {
-    public function convert(int $userId);
+    public function convert();
 }

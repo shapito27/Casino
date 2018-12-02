@@ -17,21 +17,7 @@ class SubjectPrize extends Prize
 
     public function __construct()
     {
-        parent::__construct();
-
         $randomSubject = (new Subject())->getRandom();
         $this->setValue($randomSubject->id);
     }
-
-//    /**
-//     * @return $this
-//     * @throws \Exception
-//     */
-//    public function create()
-//    {
-//        $randomSubject = (new Subject())->getRandom();
-//        $this->setValue($randomSubject->id);
-//
-//        return $this;
-//    }
 }

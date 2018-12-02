@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property int $id
  * @property float $value
- * @property int $status_id
- * @property int $type_id
  * @property int $sender_account_id
  * @property int $receiver_account_id
  * @property \Illuminate\Support\Carbon|null $created_at

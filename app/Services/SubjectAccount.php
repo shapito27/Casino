@@ -12,19 +12,21 @@ namespace App\Services;
 use app\Exceptions\NotDefinedOperationTypeException;
 use app\Exceptions\SubjectNotExistsException;
 
-class SubjectAccountType extends AccountType
+class SubjectAccount extends Account
 {
-    private static $accountTypeBalanceDefaultValue = [];
+    private $accountTypeBalanceDefaultValue = [];
 
     public static function notEnoughBalance()
     {
         throw new SubjectNotExistsException();
     }
 
-    public static function checkAccountBalanceHasEnough(int $accountId, int $value)
+    public function checkAccountBalanceHasEnough(int $value)
     {
+        $accountId = $this->getAccountId();
+
         /** @var array $subjects */
-        $subjects = self::getBalanceValue($accountId);
+        $subjects = $this->getBalanceValue($accountId);
 
         if(in_array($value, $subjects) !== true){
             throw new SubjectNotExistsException();
@@ -41,10 +43,10 @@ class SubjectAccountType extends AccountType
      * @throws NotDefinedOperationTypeException
      * @throws SubjectNotExistsException
      */
-    public static function prepareBalanceValue(int $accountId, int $value, int $type):string
+    public function prepareBalanceValue(int $accountId, int $value, int $type):string
     {
         /** @var array $currentBalance */
-        $currentBalance = self::getBalanceValue($accountId);
+        $currentBalance = $this->getBalanceValue($accountId);
         switch ($type) {
             case Operation::DEBET:
                 array_push($currentBalance, $value);
@@ -53,7 +55,7 @@ class SubjectAccountType extends AccountType
 
                 $key = null;
                 if(($key = array_search($value, $currentBalance)) === false){
-                    throw new SubjectNotExistsException('Admin Attention! CAn`t credit subject from account');
+                    throw new SubjectNotExistsException('Admin Attention! Can`t credit subject from account');
                 }
 
                 unset($currentBalance[$key]);
@@ -62,7 +64,7 @@ class SubjectAccountType extends AccountType
                 //если это админ и у него с акаунта выводим предмет, то предмет становится not available,
                 // чтобы другие игроки не могли его выйграть
                 //@todo добавить блокировку предмета в функции, где выйгрышь генерируется
-                if ((new self)->getSystemAccountId() === $accountId) {
+                if ($this->getSystemAccountId() === $accountId) {
                     Subject::markAsNotAvailable($value);
                 }
                 break;
@@ -70,31 +72,31 @@ class SubjectAccountType extends AccountType
                 throw new NotDefinedOperationTypeException();
         }
 
-        return self::prepareSubjectsForSaving($currentBalance);
+        return $this->prepareSubjectsForSaving($currentBalance);
     }
 
     /**
      * @return string
      */
-    public static function prepareInitBalanceValue():string
+    public function prepareInitBalanceValue():string
     {
-        return self::prepareSubjectsForSaving(self::$accountTypeBalanceDefaultValue);
+        return $this->prepareSubjectsForSaving($this->accountTypeBalanceDefaultValue);
     }
 
     /**
      * @param int $accountId
      * @return array
      */
-    public static function getBalanceValue(int $accountId):array
+    public function getBalanceValue(int $accountId):array
     {
-        return json_decode(Account::getBalance($accountId)->value, true);
+        return json_decode($this->getBalance($accountId)->value, true);
     }
 
     /**
      * @param array $subjects
      * @return string
      */
-    public static function prepareSubjectsForSaving(array $subjects):string
+    public function prepareSubjectsForSaving(array $subjects):string
     {
         return json_encode($subjects);
     }

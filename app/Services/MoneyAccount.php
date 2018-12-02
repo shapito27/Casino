@@ -11,21 +11,23 @@ namespace App\Services;
 
 use App\Exceptions\NotEnoughMoneyOnBalanceException;
 
-class MoneyAccountType extends AccountType
+class MoneyAccount extends Account
 {
     public static function notEnoughBalance()
     {
         throw new NotEnoughMoneyOnBalanceException();
     }
 
-    public static function checkAccountBalanceHasEnough(int $accountId, int $value)
+    public function checkAccountBalanceHasEnough( int $value)
     {
+        $accountId = $this->getAccountId();
+
         //если это админский то можно в минус
-        if($accountId === (new self)->getSystemAccountId()){
+        if($accountId === $this->getSystemAccountId()){
             return true;
         }
 
-        $currentBalance = self::getBalanceValue($accountId);
+        $currentBalance = $this->getBalanceValue($accountId);
 
         if($currentBalance < $value){
             throw new NotEnoughMoneyOnBalanceException();
@@ -48,9 +50,9 @@ class MoneyAccountType extends AccountType
         /** @var BonusPrize $newPrize */
         $newPrize = new BonusPrize();
         //set converted value
-        $newPrize->setValue($this->recountByRate($prize->value, $exchangeRate));
+        $newPrize->setValue($this->recountByRate($prize->getValue(), $exchangeRate));
 
-        $userMoneyAccount = Account::findByTypeAndUserId($this, $userId);
+        $userMoneyAccount = Account::findByTypeAndUserId($this->getClassName(), $userId);
         $userBonusAccount = Account::findByTypeAndUserId($newPrize->getAccountType(), $userId);
         $operation = new Operation();
 
@@ -58,20 +60,16 @@ class MoneyAccountType extends AccountType
             ->setReceiverAccount($userBonusAccount->id)
             ->setType(Operation::OPERATION_TYPE_REFUSE)
             ->setStatus(Operation::OPERATION_TSTATUS_OK)
-            ->convertationTransfer($prize->value, $newPrize->value);
+            ->convertationTransfer($prize->getValue(), $newPrize->getValue());
 
         return $newPrize;
     }
 
-    /**
-     * Convert money to bonus. money * excnageRate = bonuses
-     * @param int $value
-     * @param int $exchangeRate
-     * @return int
-     */
-    public function recountByRate(int $value, int $exchangeRate):float
+
+
+    public function getWinStatus()
     {
-        return $value * $exchangeRate;
+        return Transfer::OPERATION_STATUS_WAIT;
     }
 
 }

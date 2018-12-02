@@ -18,7 +18,7 @@ class AccountController extends Controller
     public function operationHistory()
     {
         // get user
-        $userId = $this->user->getCurrentUser();
+        $userId = $this->user->getCurrentUserId();
         $this->user->getOerationsHistoryByUserId($userId);
 
         return view('account.history');

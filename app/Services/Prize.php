@@ -13,12 +13,12 @@ use App\Contracts\Convertable;
 
 abstract class Prize
 {
-    /** @var AccountType strategy for transfer prize */
-    protected $accountType;
     /** @var int */
-    public $value;
+    protected $value;
     /** @var string type of Prize */
     protected $type;
+    /** @var PrizeTransmiter */
+    protected $transmiter;
 
     const MONEY = 'money';
     const BONUS = 'bonus';
@@ -33,14 +33,6 @@ abstract class Prize
     protected static $childClasses;
 
     /**
-     * Prize constructor.
-     */
-    public function __construct()
-    {
-        $this->setAccountType();
-    }
-
-    /**
      * @return string
      */
     public static function getClassName(): string
@@ -50,20 +42,10 @@ abstract class Prize
 
     /**
      * Transfer prize by delegating it to Account Type
-     * @param Services\User $user
      */
-    public function transfer(int $userId)
+    public function transfer()
     {
-        $this->accountType->transfer($this, $userId);
-    }
-
-    /**
-     * refuse prize by delegating it to Account Type
-     * @param Services\User $user
-     */
-    public function refuse(int $userId)
-    {
-        $this->accountType->refuse($this, $userId);
+        $this->transmiter->run($this);
     }
 
     /**
@@ -76,24 +58,6 @@ abstract class Prize
     {
         $currentClass = new \ReflectionClass($this);
         return $currentClass->implementsInterface(Convertable::class);
-    }
-
-    /**
-     */
-    protected function setAccountType(): void
-    {
-        $namespace = self::getNamespace();
-        $accountTypeClassName = $namespace . '\\' . ucfirst($this->type) . AccountType::ACCOUNT_TYPE_SUFIX;
-
-        $this->accountType = (new \ReflectionClass($accountTypeClassName))->newInstance();
-    }
-
-    /**
-     * @return AccountType
-     */
-    public function getAccountType(): AccountType
-    {
-        return $this->accountType;
     }
 
     /**
@@ -112,45 +76,12 @@ abstract class Prize
         return $this->value;
     }
 
-//    abstract protected function create();
-
     /**
-     * @return mixed
-     * @throws \Exception
+     * @return string
      */
-    public static function generateRandomPrize()
-    {
-        $childClasses = self::getChildClasses();
-        $prizeIndex = random_int(0, count($childClasses) - 1);
-
-//        $randomPrize = new self::$childClasses[$prizeIndex];
-//
-//        return $randomPrize->create();
-        return new $childClasses[$prizeIndex];
-    }
-
     protected static function getNamespace()
     {
         return __NAMESPACE__;
-    }
-
-    protected static function getChildClasses()
-    {
-        $childClasses = [];
-        $namespace = self::getNamespace();
-
-        $types = [
-            self::MONEY,
-            self::BONUS,
-            self::SUBJECT,
-        ];
-
-        foreach ($types as $type) {
-            $childClasses[] = $namespace . '\\' . ucfirst($type) . 'Prize';
-        }
-        //@todo проверять есть ли призы, если нету удалять тип приза
-
-        return $childClasses;
     }
 
     /**
@@ -171,13 +102,13 @@ abstract class Prize
 
         switch ($this->getType()) {
             case Prize::SUBJECT:
-                $prizeName = Subject::findById($this->value)->name;
+                $prizeName = Subject::findById($this->getValue())->name;
                 break;
             case Prize::MONEY:
-                $prizeName = $this->value . ' ₽';
+                $prizeName = $this->getValue() . ' ₽';
                 break;
             case Prize::BONUS:
-                $prizeName = 'бонусы ' . $this->value . ' шт.';
+                $prizeName = 'бонусы ' . $this->getValue() . ' шт.';
                 break;
             default:
                 throw new \Exception('Type doesn`t exists yet');
@@ -185,4 +116,15 @@ abstract class Prize
 
         return $prizeName;
     }
+
+
+    /**
+     * @param PrizeTransmiter $transmiter
+     */
+    public function setTransmiter(PrizeTransmiter $transmiter): void
+    {
+        $this->transmiter = $transmiter;
+    }
+
+
 }

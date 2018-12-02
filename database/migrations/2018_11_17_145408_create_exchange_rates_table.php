@@ -24,7 +24,7 @@ class CreateExchangeRatesTable extends Migration
 //        });
 
         /**
-         * @todo sender_account_type and store '\App\Services\MoneyAccountType'
+         * @todo sender_account_type and store '\App\Services\MoneyAccount'
          */
 //        $exRate = new \App\Models\ExchangeRate();
 //        $exRate->sender_account_type = ;

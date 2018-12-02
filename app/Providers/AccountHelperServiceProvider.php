@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Services\BonusPrize;
+use App\Services\AccountHelper;
 use Illuminate\Support\ServiceProvider;
 
-class BonusPrizeProvider extends ServiceProvider
+class AccountHelperServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
@@ -24,8 +24,9 @@ class BonusPrizeProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('bonus.prize', function ($app) {
-            return new BonusPrize();
+        $this->app->bind('account.helper', function () {
+
+            return new AccountHelper();
         });
     }
 }

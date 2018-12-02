@@ -11,12 +11,33 @@ namespace App\Services;
 
 use App\Exceptions\IsPrizeNotConvertableException;
 use Auth;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class User
 {
     /** @var Auth */
     private $auth;
 
+    /** @var Account */
+    private $account;
+
+    /** @var int */
+    private $id;
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
     /**
      * @param Auth $auth
      */
@@ -26,18 +47,40 @@ class User
     }
 
     /**
+     * set account Service
+     * @param mixed $account
+     */
+    public function setAccount(Account $account): void
+    {
+        $this->account = $account;
+    }
+
+    public function getAccount(): Account
+    {
+        if ($this->account === null) {
+            $this->setAccount(app('App\Models\Account'));
+        }
+
+        return $this->account;
+    }
+
+    /**
      * @return Auth
      */
     public function getAuth(): Auth
     {
-        return $this->auth??app('Auth');
+        if ($this->auth === null) {
+            $this->setAuth(app('Auth'));
+        }
+
+        return $this->auth;
     }
 
     /**
      * @return int
      * @throws AuthorizationException
      */
-    protected function getCurrentUser()
+    public function getCurrentUserId():int
     {
         $auth = $this->getAuth();
         $user = $auth::user();
@@ -50,11 +93,52 @@ class User
     }
 
     /**
-     * Get won prize
+     * preparing trnsfer class and prizeTransmiter for Prize because we need trnsfer it
+     * @param Prize $prize
+     * @return Prize
+     * @throws AuthorizationException
      */
-    public function getPrize(Prize $prize)
+    public function prepareForTransferingPrize(Prize $prize, Account $senderAccount, Account $receiverAccount, string $type):Prize
     {
-        $prize->transfer($this->getCurrentUser());
+        /** @var Transfer $transfer */
+        $transfer = app('transfer');
+        $transfer->setSenderAccount($senderAccount);
+        $transfer->setReceiverAccount($receiverAccount);
+
+        $transfer->setType($type);
+        $transfer->setStatus($receiverAccount->getWinStatus());// wait только для money аккаунта
+        $transfer->setValue($prize->getValue());
+
+        /** @var PrizeTransmiter $prizeTransmiter */
+        $prizeTransmiter = app('prize.transmiter');
+        $prizeTransmiter->setTransfer($transfer);
+
+        $prize->setTransmiter($prizeTransmiter);
+
+        return $prize;
+    }
+
+    /**
+     * Win prize
+     * @param PrizeGenerator $prizeGenerator
+     * @return Prize
+     */
+    public function winPrize(PrizeGenerator $prizeGenerator):Prize
+    {
+        /** @var Prize $prize */
+        $prize = $prizeGenerator->generate();
+
+        $userAccount = $this->getAccountByPrizeAndUserId($prize, $this->getId());
+        $systemAccount = $this->getAccountByPrizeAndUserId($prize, $this->getSystemUserId());
+        /** @var Transfer $transfer */
+        $transfer = app('transfer');
+        $type = $transfer::OPERATION_TYPE_WIN;
+
+        $prize = $this->prepareForTransferingPrize($prize, $systemAccount, $userAccount, $type);
+        //transfer prize to user account
+        $prize->transfer();
+
+        return $prize;
     }
 
     /**
@@ -62,35 +146,56 @@ class User
      */
     public function refusePrize(Prize $prize)
     {
-        $prize->refuse($this->getCurrentUser());
-    }
+        $userAccount = $this->getAccountByPrizeAndUserId($prize, $this->getId());
+        $systemAccount = $this->getAccountByPrizeAndUserId($prize, $this->getSystemUserId());
+        /** @var Transfer $transfer */
+        $transfer = app('transfer');
+        $type = $transfer::OPERATION_TYPE_REFUSE;
 
-    /**
-     * Get user's account by Account type and user id
-     * @param AccountType $accountType
-     * @param int $userId
-     */
-    public function getAccount(AccountType $accountType, int $userId)
-    {
+        $prize = $this->prepareForTransferingPrize($prize, $userAccount, $systemAccount, $type);
 
+        //transfer prize to user account
+        $prize->transfer();
     }
 
     /**
      * Convert prize to another type of prize. If it convertable
-     * @param MoneyPrize $prize
-     * @return BonusPrize
-     * @throws IsPrizeNotConvertableException
-     * @throws \App\Exceptions\AccountNotExistsException
-     * @throws \ReflectionException
-     * @throws \Throwable
      */
     public function convertPrize(MoneyPrize $prize):BonusPrize
     {
         if($prize->isConvertable() === false){
-            throw new IsPrizeNotConvertableException('You are tring to convert not convertable prize!');
+            throw new IsPrizeNotConvertableException('You are tring to convert unconvertable prize!');
         }
 
-        return $prize->convert($this->getCurrentUser());
+        $prize = $this->prepareForConvertingPrize($prize);
+
+        return $prize->convert();
+    }
+
+    public function prepareForConvertingPrize(MoneyPrize $prize):MoneyPrize
+    {
+        $currentUser = $this->getId();
+        $senderAccount = $this->getAccountByPrizeAndUserId($prize, $currentUser);
+
+        /** @var ConvertationTransfer $convertationTransfer */
+        $convertationTransfer = app('convertation.transfer');
+        /** @var PrizeConverter $prizeConverter */
+        $prizeConverter = app('prize.converter');
+
+        $prizeConverter->setConvertationTransfer($convertationTransfer);
+
+        $receiverAccount = $this->getAccountByPrizeAndUserId($prizeConverter->getConvertTo(), $currentUser);
+
+        $convertationTransfer->setSenderAccount($senderAccount);
+        $convertationTransfer->setReceiverAccount($receiverAccount);
+
+        $convertationTransfer->setType($convertationTransfer::OPERATION_TYPE_CONVERTATION);
+        $convertationTransfer->setStatus($convertationTransfer::OPERATION_STATUS_OK);// wait только для money аккаунта
+        $convertationTransfer->setValue($prize->getValue());
+
+        $prize->setConverter($prizeConverter);
+
+        return $prize;
     }
 
     /**
@@ -109,6 +214,33 @@ class User
 
     }
 
+    /**
+     * @return int
+     */
+    public function getSystemUserId():int
+    {
+        try{
+            return \App\Models\User::withRole('Admin')->firstOrFail()->id;
+        }catch (ModelNotFoundException $exception){
+            Log::critical('Admin Account not found!');
+            throw new AccountNotFoundException();
+        }
+    }
 
+    /**
+     * @param Prize $prize
+     * @param int $userId
+     * @return Account
+     */
+    public function getAccountByPrizeAndUserId(Prize $prize, int $userId):Account
+    {
+        /** @var AccountHelper $accountHelper */
+        $accountHelper = new AccountHelper();
 
+        /** @var Account $account */
+        $account = app($accountHelper->getAccountTypeByPrize($prize));
+        $account->setAccountId($account->findAccountByUserId($userId)->id);
+
+        return $account;
+    }
 }

@@ -11,13 +11,17 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 
-class BonusAccountType extends AccountType
+class BonusAccount extends Account
 {
     public static function notEnoughBalance()
     {
     }
 
-    public static function checkAccountBalanceHasEnough(int $accountId, int $value)
+    /**
+     * @param int $value
+     * @return bool|mixed
+     */
+    public function checkAccountBalanceHasEnough(int $value)
     {
         return true;
     }

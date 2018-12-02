@@ -24,7 +24,7 @@ class ExchangeRateServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('money.prize', function ($app) {
+        $this->app->bind('exchange.rate', function ($app) {
             return new ExchangeRate();
         });
     }

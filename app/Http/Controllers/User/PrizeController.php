@@ -4,17 +4,22 @@ namespace App\Http\Controllers\User;
 
 use App\Services\MoneyPrize;
 use App\Services\Prize;
+use App\Services\PrizeGenerator;
 use App\Services\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class PrizeController extends Controller
 {
+    /** @var User  */
     private $user;
+    /** @var PrizeGenerator  */
+    private $prizeGenerator;
 
-    public function __construct(User $user)
+    public function __construct(User $user, PrizeGenerator $prizeGenerator)
     {
         $this->user = $user;
+        $this->prizeGenerator = $prizeGenerator;
     }
 
     /**
@@ -23,21 +28,20 @@ class PrizeController extends Controller
      */
     public function getPrize(Request $request)
     {
-        /** @var Prize $prize */
-        $prize = \App\Services\Prize::generateRandomPrize();
-        $user = $this->user;
-        //transfer prize to user account
-        $user->getPrize($prize);
+        $this->user->setId($this->user->getCurrentUserId());
+
+        //win prize and transfer  to user account
+        $prize = $this->user->winPrize($this->prizeGenerator);
 
         $prizeName = $prize->getNameForView();
 
-        $request->session()->put('key', 'value');
+        $request->session()->put(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE, $prize);
 
         return response()->json(
             [
                 'view' => view('user.prize', [
                     'prizeName' => $prizeName,
-                    'prizeId' => $prize->value,
+                    'prizeId' => $prize->getValue(),
                     'showConvertationButton' => $prize->getType() === Prize::MONEY ? true : false
                 ])->render()
             ],
@@ -50,10 +54,10 @@ class PrizeController extends Controller
         /** @var Prize $prize last prize from session */
         $prize = $request->session()->get(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
 
-        /** @var User $user */
-        $user = $this->user;
+        $this->user->setId($this->user->getCurrentUserId());
+
         //transfer prize to user account
-        $user->refusePrize($prize);
+        $this->user->refusePrize($prize);
 
         //delete from session last gotten prize
         $request->session()->remove(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
@@ -69,12 +73,13 @@ class PrizeController extends Controller
 
     public function convertMoneyPrize(Request $request)
     {
-        $user = $this->user;
         /** @var MoneyPrize $prize last prize from session */
         $prize = $request->session()->get(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);
 
+        $this->user->setId($this->user->getCurrentUserId());
+
         //convert prize from money user account to bonus user account
-        $convertedPrize = $user->convertPrize($prize);
+        $convertedPrize = $this->user->convertPrize($prize);
 
         //we don't need it any more
         $request->session()->remove(Prize::SESSION_VAR_LAST_GOTTENN_PRIZE);

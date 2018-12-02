@@ -14,19 +14,32 @@ namespace App\Services;
  */
 class PrizeConverter
 {
-    private $exchangeRate;
+    /** @var int */
+    private $exchangeRateValue;
+    /** @var ConvertationTransfer */
     private $convertationTransfer;
 
-    public function convert(\App\Facades\MoneyPrize $moneyPrize)
+    /** @var BonusPrize */
+    private $convertTo;
+
+
+    public function convert():BonusPrize
     {
+        $bonusPrizeValue = $this->recountValueByRate($this->convertationTransfer->getValue());
+        $this->convertationTransfer->setConvertedValue($bonusPrizeValue);
+        $this->convertTo->setValue($bonusPrizeValue);
+
+        if ($this->convertationTransfer->run()) {
+            return $this->getConvertTo();
+        }
     }
 
     /**
-     * @param mixed $exchangeRate
+     * @param int $exchangeRateValue
      */
-    public function setExchangeRate(\App\Facades\ExchangeRate $exchangeRate): void
+    public function setExchangeRateValue(int $exchangeRateValue): void
     {
-        $this->exchangeRate = $exchangeRate;
+        $this->exchangeRateValue = $exchangeRateValue;
     }
 
     /**
@@ -37,4 +50,30 @@ class PrizeConverter
         $this->convertationTransfer = $convertationTransfer;
     }
 
+    /**
+     * Convert money to bonus. money * excnageRate = bonuses
+     * @param int $value
+     * @param int $exchangeRate
+     * @return int
+     */
+    public function recountValueByRate(int $value):float
+    {
+        return $value * $this->exchangeRateValue;
+    }
+
+    /**
+     * @param BonusPrize $convertToEntity
+     */
+    public function setConvertTo(BonusPrize $convertToEntity): void
+    {
+        $this->convertTo = $convertToEntity;
+    }
+
+    /**
+     * @return BonusPrize
+     */
+    public function getConvertTo(): BonusPrize
+    {
+        return $this->convertTo;
+    }
 }

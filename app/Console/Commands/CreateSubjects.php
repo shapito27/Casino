@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Operation;
-use App\Services\SubjectAccountType;
+use App\Services\SubjectAccount;
 use Illuminate\Console\Command;
 
 class CreateSubjects extends Command
@@ -39,63 +39,58 @@ class CreateSubjects extends Command
      */
     public function handle()
     {
-        $newSubject = (new \App\Services\Subject());
+        $newSubject = app('\App\Services\Subject');
         $newSubject1 = $newSubject
             ->add([
                 'name' => 'Ipad Gray',
                 'description' => '128Gb',
             ]);
 
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
-            Operation::DEBET);
+        /** @var SubjectAccount $subjectAccount */
+        $subjectAccount = app('subject.account');
+        $subjectAccount->updateBalance($newSubject1->id, Operation::DEBET);
 
         $newSubject2 = $newSubject
             ->add([
                 'name' => '3D Телевизор',
                 'description' => 'Samsung GH12SDF',
             ]);
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject2->id, Operation::DEBET);
 
         $newSubject2 = $newSubject
             ->add([
                 'name' => '3D Телевизор White',
                 'description' => 'Samsung GH12SDF',
             ]);
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject2->id, Operation::DEBET);
 
         $newSubject2 = $newSubject
             ->add([
                 'name' => '3D Телевизор Red',
                 'description' => 'Samsung GH12SDF',
             ]);
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject2->id, Operation::DEBET);
 
         $newSubject2 = $newSubject
             ->add([
                 'name' => '3D Телевизор Green',
                 'description' => 'Samsung GH12SDF',
             ]);
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject2->id, Operation::DEBET);
 
         $newSubject2 = $newSubject
             ->add([
                 'name' => '3D Телевизор Yellow',
                 'description' => 'Samsung GH12SDF',
             ]);
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject2->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject2->id, Operation::DEBET);
 
         $newSubject3 = $newSubject
             ->add([
                 'name' => 'Путешествие в Тайланд',
                 'description' => '6 days in 4* Hotel',
             ]);
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject3->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject3->id, Operation::DEBET);
 
         $newSubject1 = $newSubject
             ->add([
@@ -103,8 +98,7 @@ class CreateSubjects extends Command
                 'description' => '128Gb',
             ]);
 
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject1->id, Operation::DEBET);
 
         $newSubject1 = $newSubject
             ->add([
@@ -112,8 +106,7 @@ class CreateSubjects extends Command
                 'description' => '128Gb',
             ]);
 
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject1->id, Operation::DEBET);
 
         $newSubject1 = $newSubject
             ->add([
@@ -121,8 +114,7 @@ class CreateSubjects extends Command
                 'description' => '128Gb',
             ]);
 
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject1->id, Operation::DEBET);
 
 
         $newSubject1 = $newSubject
@@ -131,7 +123,6 @@ class CreateSubjects extends Command
                 'description' => '128Gb',
             ]);
 
-        \App\Services\Account::updateBalance((new SubjectAccountType())->getSystemAccountId(), $newSubject1->id,
-            Operation::DEBET);
+        $subjectAccount->updateBalance($newSubject1->id, Operation::DEBET);
     }
 }

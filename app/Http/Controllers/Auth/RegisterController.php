@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Auth;
 use \App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Services\Account;
-use App\Services\BonusAccountType;
-use App\Services\MoneyAccountType;
-use App\Services\SubjectAccountType;
+use App\Services\BonusAccount;
+use App\Services\MoneyAccount;
+use App\Services\SubjectAccount;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -75,13 +75,13 @@ class RegisterController extends Controller
         $user->attachRole(\App\Models\Role::getUser());
 
         //create money user account
-        $moneyAccount = Account::create(new MoneyAccountType(), $user->id);
+        $moneyAccount = Account::create(new MoneyAccount(), $user->id);
 
         //create Bonus user account
-        $bonusAccount = Account::create(new BonusAccountType(), $user->id);
+        $bonusAccount = Account::create(new BonusAccount(), $user->id);
 
         //create Subject user account
-        $subjectAccount = Account::create(new SubjectAccountType(), $user->id);
+        $subjectAccount = Account::create(new SubjectAccount(), $user->id);
 
         return $user;
     }
