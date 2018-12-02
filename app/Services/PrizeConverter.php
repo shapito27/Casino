@@ -18,11 +18,12 @@ class PrizeConverter
     private $exchangeRateValue;
     /** @var ConvertationTransfer */
     private $convertationTransfer;
-
     /** @var BonusPrize */
     private $convertTo;
 
-
+    /**
+     * @return BonusPrize
+     */
     public function convert():BonusPrize
     {
         $bonusPrizeValue = $this->recountValueByRate($this->convertationTransfer->getValue());
@@ -53,8 +54,7 @@ class PrizeConverter
     /**
      * Convert money to bonus. money * excnageRate = bonuses
      * @param int $value
-     * @param int $exchangeRate
-     * @return int
+     * @return float
      */
     public function recountValueByRate(int $value):float
     {

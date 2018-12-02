@@ -51,6 +51,13 @@
                             </li>
                         @else
                             @role('user')
+                            @isset($userBalance)
+                            <li class="nav-item">
+                                <a class="nav-link account-balance-container" data-url="{{ route('user.account.balance') }}" data-crsf="{{ csrf_token() }}" href="">
+                                    На счету: {{$userBalance[\App\Services\Prize::BONUS]}} бонусов | {{$userBalance[\App\Services\Prize::MONEY]}} ₽
+                                </a>
+                            </li>
+                            @endisset
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('user.game') }}">Выиграть приз</a>
                             </li>
@@ -66,6 +73,9 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('user.account') }}">
+                                        Аккаунт
+                                    </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

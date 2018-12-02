@@ -15,6 +15,7 @@ class PrizeTransmiter
     private $transfer;
 
     /**
+     * Delegate transfer value to Transfer class
      * @param Prize $prize
      */
     public function run(Prize $prize)

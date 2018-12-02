@@ -31,16 +31,19 @@ class MoneyPrize extends Prize implements Convertable
         $this->setValue(random_int($moneyInterval->getFrom(), $moneyInterval->getTo()));
     }
 
-
+    /**
+     * @return BonusPrize
+     */
     public function convert():BonusPrize
     {
         return $this->converter->convert();
     }
 
     /**
-     * @param mixed $converter
+     * Delegate Convertation to PrizeConverter class
+     * @param PrizeConverter $converter
      */
-    public function setConverter($converter): void
+    public function setConverter(PrizeConverter $converter): void
     {
         $this->converter = $converter;
     }

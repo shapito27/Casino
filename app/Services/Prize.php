@@ -57,6 +57,7 @@ abstract class Prize
     public function isConvertable()
     {
         $currentClass = new \ReflectionClass($this);
+
         return $currentClass->implementsInterface(Convertable::class);
     }
 
@@ -116,7 +117,6 @@ abstract class Prize
 
         return $prizeName;
     }
-
 
     /**
      * @param PrizeTransmiter $transmiter

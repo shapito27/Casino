@@ -24,11 +24,12 @@ class ConvertationTransfer extends AbstractTransfer
     {
         $this->setSenderAccountId($this->senderAccount->getAccountId());
         $this->setReceiverAccountId($this->receiverAccount->getAccountId());
+
+        //check that we have enough for transfer
         $this->senderAccount->checkAccountBalanceHasEnough($this->getValue());
 
         // save operation and updates balances in one transaction
         DB::transaction(function (){
-            //@todo помечаем предыдущую операцию выйгрыша денег как ок вместо ожидания
             // save operation
             $this->save();
             //@todo lock admin's balance(row) while update is going
@@ -72,9 +73,9 @@ class ConvertationTransfer extends AbstractTransfer
         /** @var \App\Models\Operation $previousOperationModel */
         $previousOperationModel = $this->getModel();
 
+        // find previous operation by value and receiver_account_id
         $previousOperation = $previousOperationModel::where([
             ['value', $this->getValue()],
-            ['status', self::OPERATION_STATUS_WAIT],
             ['receiver_account_id', $this->senderAccount->getAccountId()],
         ])->latest()->first();
 

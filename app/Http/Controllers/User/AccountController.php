@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\User;
 
 use App\Services\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class AccountController extends Controller
@@ -15,13 +14,25 @@ class AccountController extends Controller
         $this->user = $user;
     }
 
-    public function operationHistory()
+    public function accaunt()
     {
-        // get user
-        $userId = $this->user->getCurrentUserId();
-        $this->user->getOerationsHistoryByUserId($userId);
+        $userBalance = $this->user->getCurrentBalance();
 
-        return view('account.history');
+        return view('user.account',[
+            'userBalance' => $userBalance
+        ]);
+    }
+
+    public function withdraw()
+    {
+        $result = $this->user->withdraw();
+
+        return response()->json(
+            [
+                $result?$this->user::SUCCESS_WITHDRAW:$this->user::FAIL_WITHDRAW,
+            ],
+            200
+        );
     }
 
     public function curentBalance()
@@ -30,9 +41,7 @@ class AccountController extends Controller
 
         return response()->json(
             [
-                'view' => view('account.balance', [
-                    'userBalance' => $userBalance
-                ])->render()
+                $this->user->getUserBalanceForView($userBalance)
             ],
             200
         );

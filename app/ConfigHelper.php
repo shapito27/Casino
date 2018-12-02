@@ -2,9 +2,16 @@
 
 namespace App;
 
-
+/**
+ * Class ConfigHelper
+ * @package App
+ */
 class ConfigHelper
 {
+    /**
+     * @param string $key
+     * @param string $value
+     */
     public static function setEnvironmentValue(string $key, string $value)
     {
         $path = app()->environmentFilePath();

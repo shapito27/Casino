@@ -44,7 +44,7 @@ class CreateTestUser extends Command
     {
         $password = 'ksd9f8asdksdf9';
 
-        //Создаем проверяющего
+        //Create user
         $user = new User();
         $user->name = 'TestUser';
         $user->password = Hash::make($password);
@@ -53,20 +53,20 @@ class CreateTestUser extends Command
         $user->attachRole(\App\Models\Role::getUser());
 
         /**
-         * Создаем  счета админа
+         * Create user's accounts
          */
 
-        //Создаем денежный счет админа
+        //Create user's money accounts
         /** @var MoneyAccount $moneyAccount */
         $moneyAccount = app('money.account');
         $moneyAccount->create($user->id);
 
-        //Создаем бонусный счет админа
+        //Create user's bonus accounts
         /** @var BonusAccount $bonusAccount */
         $bonusAccount = app('bonus.account');
         $bonusAccount->create($user->id);
 
-        //Создаем предметный счет админа
+        //Create user's subject accounts
         /** @var SubjectAccount $subjectAccount */
         $subjectAccount = app('subject.account');
         $subjectAccount->create($user->id);

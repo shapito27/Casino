@@ -33,7 +33,7 @@ abstract class Account
     /** @var int  */
     private $accountTypeBalanceDefaultValue = 0;
     /** @var string  */
-    public const ACCOUNT_SUFIX = 'account';
+    public const ACCOUNT_SUFFIX = 'account';
 
     /**
      * @param \App\Models\Account $model
@@ -52,6 +52,16 @@ abstract class Account
     }
 
     /**
+     * Get Type acccount for facade
+     * @return string
+     */
+    public function getType(): string
+    {
+        return str_replace([self::ACCOUNT_SUFFIX, strtolower(self::getNamespace()) . '\\'], '',
+                strtolower($this->getClassName())) . '.' . self::ACCOUNT_SUFFIX;
+    }
+
+    /**
      * @param int $accountId
      */
     public function setAccountId(int $accountId): void
@@ -61,6 +71,7 @@ abstract class Account
 
     /**
      * @return int
+     * @throws NotSetedAccountIdException
      */
     public function getAccountId(): int
     {
@@ -111,7 +122,6 @@ abstract class Account
     /**
      * Create account using received type
      *
-     * @param Account $accountType
      * @param int $userId
      * @return ModelAccount
      * @throws \Throwable
@@ -152,8 +162,11 @@ abstract class Account
     }
 
     /**
+     * Update balance value through model App\Models\AccountBalanceHistory
      * @param int $accountId
      * @param $value
+     * @param int|null $operationId
+     * @throws \Throwable
      */
     protected function setBalance(int $accountId, $value, int $operationId = null):void
     {
@@ -164,10 +177,15 @@ abstract class Account
         $newCurrentBalance->saveOrFail();
     }
 
-    /**
-     * @param int $accountId
+    /***
+     * update Balance considering inheritance
      * @param int $value
-     * @param int $type debit|credit
+     * @param int $type
+     * @param int|null $operationId
+     * @throws BalanceNotExistsException
+     * @throws NotDefinedOperationTypeException
+     * @throws NotSetedAccountIdException
+     * @throws \Throwable
      */
     public function updateBalance(int $value, int $type, int $operationId = null): void
     {
@@ -189,9 +207,10 @@ abstract class Account
 
     /**
      * @param int $accountId
-     * @return AccountBalanceHistory|\Illuminate\Database\Eloquent\Model
+     * @return AccountBalanceHistory|\Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder
+     * @throws AccountBalanceHistoryNotFoundException
      */
-    public function getBalance(int $accountId)
+    protected function getBalance(int $accountId)
     {
         try{
             $currentBalance = $this->getAccountBalanceHistory()::where('account_id', $accountId)
@@ -203,20 +222,6 @@ abstract class Account
             Log::critical('AccountBalanceHistory not found!');
             throw new AccountBalanceHistoryNotFoundException();
         }
-    }
-
-
-    final public function refuse(Prize $prize, int $userId)
-    {
-        $userAccount = $this->findAccountByUserId( $userId);
-        $operation = new Operation();
-
-        $result = $operation->setSenderAccount($userAccount->id)
-            ->setReceiverAccount($this->getSystemAccountId())
-            ->setValue($prize->getValue())
-            ->setType(Operation::OPERATION_TYPE_REFUSE)
-            ->setStatus(Operation::OPERATION_TSTATUS_OK)
-            ->transfer();
     }
 
     /**
@@ -244,9 +249,11 @@ abstract class Account
     abstract public function checkAccountBalanceHasEnough(int $value);
 
     /**
+     * Prepare value for update Balance
      * @param int $accountId
      * @param int $value
      * @param int $type
+     * @return int
      * @throws NotDefinedOperationTypeException
      */
     public function prepareBalanceValue(int $accountId, int $value, int $type)
@@ -269,8 +276,8 @@ abstract class Account
     }
 
     /**
-     * @param $value
-     * @return int|string
+     * prepare value for init account balance
+     * @return int
      */
     public function prepareInitBalanceValue()
     {
@@ -280,6 +287,7 @@ abstract class Account
     /**
      * @param int $accountId
      * @return int
+     * @throws AccountBalanceHistoryNotFoundException
      */
     public function getBalanceValue(int $accountId)
     {
@@ -287,6 +295,7 @@ abstract class Account
     }
 
     /**
+     * Get Status for operation when user win prize
      * @return string
      */
     public function getWinStatus()

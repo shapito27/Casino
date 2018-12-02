@@ -20,6 +20,9 @@
 ## Запуск теста
 `php vendor/bin/phpunit` 
 
+## Запуск команды, которая будет отправлять денежные призы на счета пользователей
+`php artisan casino:sendMoney` 
+
 
 ## Запуск веб-сервера 
 `php artisan serve`

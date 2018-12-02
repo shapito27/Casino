@@ -98,6 +98,10 @@ class PrizeController extends Controller
 
     public function game()
     {
-        return view('user.game');
+        $userBalance = $this->user->getCurrentBalance();
+
+        return view('user.game',[
+            'userBalance' => $userBalance
+        ]);
     }
 }

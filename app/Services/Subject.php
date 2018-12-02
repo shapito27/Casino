@@ -20,6 +20,7 @@ class Subject
 {
     /**
      * @return \App\Models\Subject|\Illuminate\Database\Eloquent\Model
+     * @throws SubjectNotFoundException
      */
     public function getRandom()
     {

@@ -17,7 +17,7 @@ class PrizeGenerator
     /** @var Prize */
     private $prize;
     /** @var string  */
-    const PRIZE_SUFIX = 'prize';
+    const PRIZE_SUFFIX = 'prize';
 
     /**
      * @return \Illuminate\Foundation\Application|mixed
@@ -46,7 +46,7 @@ class PrizeGenerator
         ];
 
         foreach ($types as $type) {
-            $childClasses[] = $type . '.' . self::PRIZE_SUFIX;
+            $childClasses[] = $type . '.' . self::PRIZE_SUFFIX;
         }
 
         return $childClasses;

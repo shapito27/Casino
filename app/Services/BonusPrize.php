@@ -17,7 +17,9 @@ class BonusPrize extends Prize
 
     public function __construct()
     {
-        $moneyInterval = (new PrizeInterval($this::getClassName()))->findIntervalByPrizeType();
-        $this->setValue(random_int($moneyInterval->getFrom(), $moneyInterval->getTo()));
+        //get bonus interval
+        $bonusInterval = (new PrizeInterval($this::getClassName()))->findIntervalByPrizeType();
+        //set random value from interval
+        $this->setValue(random_int($bonusInterval->getFrom(), $bonusInterval->getTo()));
     }
 }

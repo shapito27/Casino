@@ -37,6 +37,7 @@ class CreateRoles extends Command
      */
     public function handle()
     {
+        //create role admin
         $owner = new \App\Models\Role();
         $owner->name = 'admin';
         $owner->display_name  = 'Admin of portal';
@@ -44,6 +45,7 @@ class CreateRoles extends Command
         $owner->save();
 
 
+        //create role user
         $owner = new \App\Models\Role();
         $owner->name = 'user';
         $owner->display_name  = 'Common person';

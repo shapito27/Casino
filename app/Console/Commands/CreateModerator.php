@@ -45,7 +45,7 @@ class CreateModerator extends Command
     {
         $password = '3sdf980sd8fsdf';
 
-        //Создаем проверяющего
+        //Create admin
         $user = new User();
         $user->name = 'Moderator';
         $user->password = Hash::make($password);
@@ -54,24 +54,24 @@ class CreateModerator extends Command
         $user->attachRole(\App\Models\Role::getAdmin());
 
         /**
-         * Создаем  счета админа
+         * Create admin's accounts
          */
 
-        //Создаем денежный счет админа
+        //Create admin's money accounts
         /** @var MoneyAccount $moneyAccount */
         $moneyAccount = app('money.account');
         $moneyAccount->create($user->id);
         //добавляем в конфиг денежный счет админа
         ConfigHelper::setEnvironmentValue('SYSTEM_MONEY_ACCOUNT', $moneyAccount->getAccountId());
 
-        //Создаем бонусный счет админа
+        //Create admin's bonus accounts
         /** @var BonusAccount $bonusAccount */
         $bonusAccount = app('bonus.account');
         $bonusAccount->create($user->id);
         //добавляем в конфиг бонусный счет админа
         ConfigHelper::setEnvironmentValue('SYSTEM_BONUS_ACCOUNT', $bonusAccount->getAccountId());
 
-        //Создаем предметный счет админа
+        //Create admin's subject accounts
         /** @var SubjectAccount $subjectAccount */
         $subjectAccount = app('subject.account');
         $subjectAccount->create($user->id);

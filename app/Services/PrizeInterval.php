@@ -8,9 +8,7 @@
 
 namespace App\Services;
 
-
 use App\Exceptions\IntervalAlreadyExistException;
-use App\Exceptions\IntervalNotFoundedException;
 use App\Exceptions\IsNotChildOfPrizeException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -43,13 +41,13 @@ class PrizeInterval
     }
 
     /**
-     * @todo Сущность должна возвращать модель или себя????
      * @param string $name
-     * @param Prize $prizeType
+     * @param string $prizeTypeClassName
      * @param int $from
      * @param int $to
      * @param int $userId
      * @throws IntervalAlreadyExistException
+     * @throws IsNotChildOfPrizeException
      */
     public static function createInterval(string $name, string $prizeTypeClassName, int $from, int $to, int $userId)
     {

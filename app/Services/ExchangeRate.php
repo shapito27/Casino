@@ -24,7 +24,6 @@ class ExchangeRate
     }
 
     /**
-     * @todo работает?
      * @param $value
      */
     public function setRate(int $value)

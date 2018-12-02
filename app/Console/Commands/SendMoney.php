@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Transfer;
 use Illuminate\Console\Command;
 
 class SendMoney extends Command
@@ -11,14 +12,14 @@ class SendMoney extends Command
      *
      * @var string
      */
-    protected $signature = 'casino:sendMoney';
+    protected $signature = 'casino:sendMoney {limit=10}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Send money to accounts for users who waited transfer';
 
     /**
      * Create a new command instance.
@@ -31,13 +32,19 @@ class SendMoney extends Command
     }
 
     /**
-     * Execute the console command.
+     * Get limit.
+     * Send money to accounts for users who waited transfer
      *
      * @return mixed
      */
     public function handle()
     {
+        // get argument limit from cli
+        $limit = $this->argument('limit');
 
+        /** @var Transfer $transfer */
+        $transfer = app('transfer');
+        $transfer->approveWaitedOperations($limit);
 
         echo "Success!\n";
     }

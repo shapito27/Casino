@@ -23,15 +23,18 @@ abstract class AbstractTransfer
     /** @var Account */
     protected $receiverAccount;
 
-    const OPERATION_TYPE_WIN = 'Выйгрыш';
-    const OPERATION_TYPE_REFUSE = 'Отказ';
-    const OPERATION_TYPE_CONVERTATION = 'Конвертация';
+    public const OPERATION_TYPE_WIN = 'Выйгрыш';
+    public const OPERATION_TYPE_REFUSE = 'Отказ';
+    public const OPERATION_TYPE_CONVERTATION = 'Конвертация';
+    public const OPERATION_TYPE_WITHDRAW = 'Вывод средств';
 
-    const OPERATION_STATUS_WAIT = 'Ожидание';
-    const OPERATION_STATUS_OK = 'Завершено успешно';
+    public const OPERATION_STATUS_WAIT = 'Ожидание';
+    public const OPERATION_STATUS_OK = 'Завершено успешно';
 
-    const DEBET = 1;
-    const CREDIT = 0;
+    /** @var int means account getting value */
+    public const DEBET = 1;
+    /** @var int means account losing value */
+    public const CREDIT = 0;
 
     abstract public function run();
 

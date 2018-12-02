@@ -9,14 +9,8 @@
 namespace App\Services;
 
 
-use Illuminate\Support\Facades\Log;
-
 class BonusAccount extends Account
 {
-    public static function notEnoughBalance()
-    {
-    }
-
     /**
      * @param int $value
      * @return bool|mixed

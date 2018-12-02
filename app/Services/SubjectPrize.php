@@ -17,6 +17,7 @@ class SubjectPrize extends Prize
 
     public function __construct()
     {
+        //@todo inject Subject
         $randomSubject = (new Subject())->getRandom();
         $this->setValue($randomSubject->id);
     }
