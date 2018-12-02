@@ -62,21 +62,21 @@ class CreateModerator extends Command
         $moneyAccount = app('money.account');
         $moneyAccount->create($user->id);
         //добавляем в конфиг денежный счет админа
-        ConfigHelper::setEnvironmentValue('SYSTEM_MONEY_ACCOUNT', $moneyAccount->id);
+        ConfigHelper::setEnvironmentValue('SYSTEM_MONEY_ACCOUNT', $moneyAccount->getAccountId());
 
         //Создаем бонусный счет админа
         /** @var BonusAccount $bonusAccount */
         $bonusAccount = app('bonus.account');
         $bonusAccount->create($user->id);
         //добавляем в конфиг бонусный счет админа
-        ConfigHelper::setEnvironmentValue('SYSTEM_BONUS_ACCOUNT', $bonusAccount->id);
+        ConfigHelper::setEnvironmentValue('SYSTEM_BONUS_ACCOUNT', $bonusAccount->getAccountId());
 
         //Создаем предметный счет админа
         /** @var SubjectAccount $subjectAccount */
         $subjectAccount = app('subject.account');
         $subjectAccount->create($user->id);
         //добавляем в конфиг предметный счет админа
-        ConfigHelper::setEnvironmentValue('SYSTEM_SUBJECT_ACCOUNT', $subjectAccount->id);
+        ConfigHelper::setEnvironmentValue('SYSTEM_SUBJECT_ACCOUNT', $subjectAccount->getAccountId());
 
         echo "Success!\n";
     }

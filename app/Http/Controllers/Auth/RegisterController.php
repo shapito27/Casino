@@ -75,13 +75,19 @@ class RegisterController extends Controller
         $user->attachRole(\App\Models\Role::getUser());
 
         //create money user account
-        $moneyAccount = Account::create(new MoneyAccount(), $user->id);
+        /** @var MoneyAccount $moneyAccount */
+        $moneyAccount = app('money.account');
+        $moneyAccount->create($user->id);
 
         //create Bonus user account
-        $bonusAccount = Account::create(new BonusAccount(), $user->id);
+        /** @var BonusAccount $bonusAccount */
+        $bonusAccount = app('bonus.account');
+        $bonusAccount->create( $user->id);
 
         //create Subject user account
-        $subjectAccount = Account::create(new SubjectAccount(), $user->id);
+        /** @var SubjectAccount $subjectAccount */
+        $subjectAccount = app('subject.account');
+        $subjectAccount->create($user->id);
 
         return $user;
     }

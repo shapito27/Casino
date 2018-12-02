@@ -98,7 +98,7 @@ class User
      * @return Prize
      * @throws AuthorizationException
      */
-    public function prepareForTransferingPrize(Prize $prize, Account $senderAccount, Account $receiverAccount, string $type):Prize
+    public function prepareForTransferingPrize(Prize $prize, Account $senderAccount, Account $receiverAccount, string $type, $status):Prize
     {
         /** @var Transfer $transfer */
         $transfer = app('transfer');
@@ -106,7 +106,7 @@ class User
         $transfer->setReceiverAccount($receiverAccount);
 
         $transfer->setType($type);
-        $transfer->setStatus($receiverAccount->getWinStatus());// wait только для money аккаунта
+        $transfer->setStatus($status);
         $transfer->setValue($prize->getValue());
 
         /** @var PrizeTransmiter $prizeTransmiter */
@@ -133,8 +133,9 @@ class User
         /** @var Transfer $transfer */
         $transfer = app('transfer');
         $type = $transfer::OPERATION_TYPE_WIN;
+        $status = $userAccount->getWinStatus();
 
-        $prize = $this->prepareForTransferingPrize($prize, $systemAccount, $userAccount, $type);
+        $prize = $this->prepareForTransferingPrize($prize, $systemAccount, $userAccount, $type, $status);
         //transfer prize to user account
         $prize->transfer();
 
@@ -151,8 +152,9 @@ class User
         /** @var Transfer $transfer */
         $transfer = app('transfer');
         $type = $transfer::OPERATION_TYPE_REFUSE;
+        $status = $userAccount->getWinStatus();
 
-        $prize = $this->prepareForTransferingPrize($prize, $userAccount, $systemAccount, $type);
+        $prize = $this->prepareForTransferingPrize($prize, $userAccount, $systemAccount, $type, $status);
 
         //transfer prize to user account
         $prize->transfer();

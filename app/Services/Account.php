@@ -127,10 +127,11 @@ abstract class Account
         $newAccount->type = $this->getClassName();
         $newAccount->user_id = $userId;
         $newAccount->saveOrFail();
-
+        $newAccountId = (int)$newAccount->id;
         //delegate preparing balance value to specific Account entity
         $initValue = $this->prepareInitBalanceValue();
-        $this->setBalance((int)$newAccount->id, $initValue);
+        $this->setBalance($newAccountId, $initValue);
+        $this->setAccountId($newAccountId);
 
         return $newAccount;
     }
@@ -154,10 +155,11 @@ abstract class Account
      * @param int $accountId
      * @param $value
      */
-    protected function setBalance(int $accountId, $value):void
+    protected function setBalance(int $accountId, $value, int $operationId = null):void
     {
         $newCurrentBalance = $this->getAccountBalanceHistory();
         $newCurrentBalance->account_id = $accountId;
+        $newCurrentBalance->operation_id = $operationId;
         $newCurrentBalance->value = $value;
         $newCurrentBalance->saveOrFail();
     }
@@ -167,7 +169,7 @@ abstract class Account
      * @param int $value
      * @param int $type debit|credit
      */
-    public function updateBalance(int $value, int $type): void
+    public function updateBalance(int $value, int $type, int $operationId = null): void
     {
         $accountId = $this->getAccountId();
         $newValue = null;
@@ -182,7 +184,7 @@ abstract class Account
         //delegate preparing balance value to specific Account entity
         $newValue = $this->prepareBalanceValue($accountId, $value, $type);
 
-        $this->setBalance($accountId, $newValue);
+        $this->setBalance($accountId, $newValue, $operationId);
     }
 
     /**

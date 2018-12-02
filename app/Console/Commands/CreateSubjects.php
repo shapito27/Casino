@@ -48,6 +48,8 @@ class CreateSubjects extends Command
 
         /** @var SubjectAccount $subjectAccount */
         $subjectAccount = app('subject.account');
+        $subjectAccount->setAccountId($subjectAccount->getSystemAccountId());
+
         $subjectAccount->updateBalance($newSubject1->id, Operation::DEBET);
 
         $newSubject2 = $newSubject

@@ -48,6 +48,10 @@ abstract class AbstractTransfer
      */
     public function getModel(): \App\Models\Operation
     {
+        if ($this->model === null) {
+            return app('App\Models\Operation');
+        }
+
         return $this->model;
     }
 

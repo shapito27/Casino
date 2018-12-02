@@ -16,6 +16,7 @@ class CreateAccountBalanceHistoriesTable extends Migration
         Schema::create('account_balance_histories', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('account_id');
+            $table->integer('operation_id')->nullable();
             $table->string('value', 100);
             $table->timestamps();
             $table->index('account_id');

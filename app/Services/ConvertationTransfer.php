@@ -9,6 +9,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class ConvertationTransfer need for transfer value from user1 account1 to  user1 account2
@@ -30,11 +31,13 @@ class ConvertationTransfer extends AbstractTransfer
             //@todo помечаем предыдущую операцию выйгрыша денег как ок вместо ожидания
             // save operation
             $this->save();
-            //@todo блокировать баланс (строку) админа пока идет обновление
+            //@todo lock admin's balance(row) while update is going
             //обновление баланса аккаунта 1
-            $this->senderAccount->updateBalance( $this->getValue(), self::CREDIT);
+            $this->senderAccount->updateBalance( $this->getValue(), self::CREDIT, $this->getId());
             //обновление баланса аккаунта 2
-            $this->receiverAccount->updateBalance($this->getConvertedValue(), self::DEBET);
+            $this->receiverAccount->updateBalance($this->getConvertedValue(), self::DEBET, $this->getId());
+            //update previous operation before Convertation, when user won
+            $this->updatePreviousOperation();
         }, 3);
 
         if($this->getId() !== null){
@@ -58,5 +61,29 @@ class ConvertationTransfer extends AbstractTransfer
     public function getConvertedValue(): int
     {
         return $this->convertedValue;
+    }
+
+    /**
+     * @return bool
+     * @throws \App\Exceptions\NotSetedAccountIdException
+     */
+    public function updatePreviousOperation(): bool
+    {
+        /** @var \App\Models\Operation $previousOperationModel */
+        $previousOperationModel = $this->getModel();
+
+        $previousOperation = $previousOperationModel::where([
+            ['value', $this->getValue()],
+            ['status', self::OPERATION_STATUS_WAIT],
+            ['receiver_account_id', $this->senderAccount->getAccountId()],
+        ])->latest()->first();
+
+        if($previousOperation === null){
+            Log::critical('After convertation failed to change previous operation status!');
+        }
+
+        $previousOperation->update(['status' => self::OPERATION_STATUS_OK]);
+
+        return true;
     }
 }

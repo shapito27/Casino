@@ -28,9 +28,9 @@ class Transfer extends AbstractTransfer
             $this->save();
             //@todo блокировать баланс (строку) админа пока идет обновление
             //обновление баланса аккаунта 1
-            $this->senderAccount->updateBalance( $this->getValue(), self::CREDIT);
+            $this->senderAccount->updateBalance( $this->getValue(), self::CREDIT, $this->getId());
             //обновление баланса аккаунта 2
-            $this->receiverAccount->updateBalance($this->getValue(), self::DEBET);
+            $this->receiverAccount->updateBalance($this->getValue(), self::DEBET, $this->getId());
         }, 3);
 
         if($this->getId() !== null){
@@ -40,4 +40,16 @@ class Transfer extends AbstractTransfer
         return false;
     }
 
+    // найти опеации в ожидании
+    // обновить их статусы
+    // обновить баланс аккаунтов
+    public function findWaitedOperations($limit)
+    {
+        $operationModel = $this->getModel();
+        $operationModel::where('status', self::OPERATION_STATUS_WAIT)
+            ->latest()
+            ->take($limit)
+            ->update(['status' => self::OPERATION_STATUS_OK]);
+
+    }
 }
